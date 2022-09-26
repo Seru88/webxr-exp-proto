@@ -16,16 +16,22 @@ const LoadingPrompt: FunctionalComponent<LoadingPromptProps> = ({
     <>
       <div
         class={clsx(
+          'w-full',
+          'absolute',
+          'bottom-32',
+          'flex',
+          'flex-col',
+          'justify-center',
+          'items-center',
           'text-black',
-          'text-2xl',
+          'text-md',
           'uppercase',
-          'font-semibold',
-          'text-center'
+          'font-semibold'
         )}
       >
         {message}
+        <ProgressBar value={progress} />
       </div>
-      <ProgressBar value={progress} />
     </>
   )
 }

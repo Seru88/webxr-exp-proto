@@ -12,18 +12,18 @@ declare global {
 
 export function App() {
   return (
-    <Router>
-      <Home path='/' />
-      <AsyncRoute
-        path='/xr'
-        getComponent={() =>
-          import('routes/XrScene').then(module => module.default)
-        }
-        loading={() => (
-          <PromptScreen
-            show
-            prompt={
-              <div class='mt-32'>
+    <div class='w-screen h-screen'>
+      <Router>
+        <Home path='/' />
+        <AsyncRoute
+          path='/xr'
+          getComponent={() =>
+            import('routes/XrScene').then(module => module.default)
+          }
+          loading={() => (
+            <PromptScreen
+              show
+              prompt={
                 <LoadingPrompt
                   message={
                     <>
@@ -32,11 +32,11 @@ export function App() {
                     </>
                   }
                 />
-              </div>
-            }
-          />
-        )}
-      />
-    </Router>
+              }
+            />
+          )}
+        />
+      </Router>
+    </div>
   )
 }

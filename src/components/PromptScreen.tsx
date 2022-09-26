@@ -19,7 +19,7 @@ const PromptScreen: FunctionalComponent<PromptScreenProps> = ({
     if (show === false) {
       setTimeout(() => {
         setUnMount(true)
-      }, 1300)
+      }, 350)
     }
   }, [show, setUnMount])
 
@@ -27,23 +27,27 @@ const PromptScreen: FunctionalComponent<PromptScreenProps> = ({
 
   return (
     <div
-      id='loading-screen'
+      id='prompt-screen'
       class={clsx(
         'absolute',
-        'w-screen',
-        'h-screen',
+
+        // 'top-0',
+        // 'bottom-0',
+        // 'left-0',
+        // 'right-0',
+        'w-full',
+        'h-full',
         'bg-white',
         'transition-opacity',
-        'ease-out',
-        'duration-1000',
-        // 'duration-1000',
-        'delay-300',
+        'ease-in',
+        'duration-300',
+        // 'delay-75',
         show ? 'opacity-100' : 'opacity-0',
         'z-[9999]'
       )}
     >
-      <div class='min-w-full flex flex-col justify-center items-center mt-32'>
-        <img class='max-w-sm h-auto' src={iconSrc} alt='Ford' />
+      <div class='absolute min-w-full flex flex-col justify-center items-center top-16'>
+        <img class='w-[250px] h-auto' src={iconSrc} alt='Ford' />
       </div>
       {prompt}
       <div class='absolute bottom-6 w-full flex items-center justify-center'>

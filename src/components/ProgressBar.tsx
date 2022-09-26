@@ -19,7 +19,8 @@ const ProgressBar: FunctionalComponent<ProgressBarProps> = ({ value }) => {
           id='progress-bar-value'
           class={clsx(
             'w-full h-full bg-white rounded-lg transition-all',
-            Boolean(value) === false && 'animate-indeterminate origin-left'
+            (value === undefined || value === 0) &&
+              'animate-indeterminate origin-left'
           )}
           style={value && value > 0 ? { width: `${value}%` } : undefined}
         />
