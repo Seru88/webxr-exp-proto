@@ -24,6 +24,7 @@
     "@preact/preset-vite": "^2.3.0",
     "@tailwindcss/typography": "^0.5.7",
     "@types/node": "^18.7.18",
+    "@types/webxr": "^0.5.0",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "@vitejs/plugin-basic-ssl": "^0.1.2",
