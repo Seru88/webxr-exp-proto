@@ -6,3 +6,5 @@ declare module '*.glb' {
 declare module '*.env' {
   export default '' as string
 }
+
+import JSX = preact.JSX

@@ -1,19 +1,21 @@
-import { FC } from 'preact/compat'
-import { Link } from 'preact-router/match'
+import PromptScreen from 'components/PromptScreen'
+import { FunctionalComponent } from 'preact'
 import { RoutableProps } from 'preact-router'
+import { Link } from 'preact-router/match'
+import startBtnPath from 'assets/ui/ford_start_button.png'
 
-const Home: FC<RoutableProps> = () => {
+const Home: FunctionalComponent<RoutableProps> = () => {
   return (
-    <div class='flex justify-center items-center h-screen'>
-      <Link
-        // @ts-expect-error fale repoting
-        class='p-4 bg-slate-800 text-white'
-        activeClassName='active'
-        href='/xr'
-      >
-        Go to Scene
-      </Link>
-    </div>
+    <PromptScreen
+      show={true}
+      prompt={
+        <div class='w-full flex justify-center mt-32'>
+          <Link href='/xr'>
+            <img class='w-[256px]' src={startBtnPath} alt='start' />
+          </Link>
+        </div>
+      }
+    />
   )
 }
 

@@ -22,14 +22,18 @@ import {
 } from '@babylonjs/core'
 import {
   WebXRBackgroundRemover,
+  WebXREnterExitUIButton,
   WebXRHitTest,
   WebXRState
 } from '@babylonjs/core/XR'
 import modelPath from 'assets/models/car_model.glb'
 import indicatorPath from 'assets/textures/cursor.png'
+import LoadingPrompt from 'components/LoadingPrompt'
+import PromptScreen from 'components/PromptScreen'
+import { FunctionalComponent } from 'preact'
 import { RoutableProps } from 'preact-router'
-import { FC, useEffect, useRef } from 'preact/compat'
-
+import { useEffect, useRef, useState } from 'preact/hooks'
+import arStartBtnPath from 'assets/ui/ar_start_button.png'
 import type { Mesh } from '@babylonjs/core/Meshes/mesh'
 
 const camFOV = 0.8
@@ -45,7 +49,11 @@ const camWheelPrecision = 50
 let rootModel: Mesh | null = null
 // let dirLight: DirectionalLight | null = null
 
-const XrScene: FC<RoutableProps> = () => {
+const XrScene: FunctionalComponent<RoutableProps> = () => {
+  const [arSupported, setArSupported] = useState(false)
+  const [progress, setProgress] = useState<number>()
+  const [isLoading, setIsLoading] = useState(true)
+  const startBtn = useRef<HTMLButtonElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   const initScene = async () => {
@@ -118,8 +126,11 @@ const XrScene: FC<RoutableProps> = () => {
       /**
        * Show loading screen while loading assets.
        */
-      engine.displayLoadingUI()
+      // engine.displayLoadingUI()
 
+      /**
+       * Create transform node for easier model manipulation.
+       */
       const transNode = new TransformNode('trans-node', scene)
       transNode.rotationQuaternion = new Quaternion()
 
@@ -162,7 +173,11 @@ const XrScene: FC<RoutableProps> = () => {
           // rootModel.setBoundingInfo(bInfo)
           // camera.setTarget(rootModel, true, false, true)
           camera.setTarget(transNode.position)
-          engine.hideLoadingUI()
+          // engine.hideLoadingUI()
+          setIsLoading(false)
+        },
+        xhr => {
+          setProgress((xhr.loaded / xhr.total) * 100)
         }
       )
 
@@ -181,7 +196,16 @@ const XrScene: FC<RoutableProps> = () => {
        */
       const xr = await scene.createDefaultXRExperienceAsync({
         uiOptions: {
-          sessionMode: 'immersive-ar'
+          sessionMode: 'immersive-ar',
+          customButtons: startBtn.current
+            ? [
+                new WebXREnterExitUIButton(
+                  startBtn.current,
+                  'immersive-ar',
+                  'local-floor'
+                )
+              ]
+            : undefined
         },
         optionalFeatures: true,
         // @ts-expect-error should work just fine.
@@ -409,14 +433,51 @@ const XrScene: FC<RoutableProps> = () => {
 
   useEffect(() => {
     initScene()
+    if (navigator.xr) {
+      navigator.xr
+        .isSessionSupported('immersive-ar')
+        .then((isSupported: boolean) => {
+          console.log(isSupported)
+          setArSupported(isSupported)
+        })
+    }
   }, [])
 
   return (
-    <canvas
-      id='render-canvas'
-      ref={canvasRef}
-      class='h-screen w-screen overflow-hidden outline-none'
-    />
+    <>
+      <PromptScreen
+        show={isLoading}
+        prompt={
+          <div class='mt-32'>
+            <LoadingPrompt
+              message={
+                <>
+                  <h6>Loading</h6>
+                  <h6>Experience</h6>
+                </>
+              }
+              progress={progress}
+            />
+          </div>
+        }
+      />
+      {arSupported && (
+        <div class='z-[12] absolute right-5 bottom-12'>
+          <button id='start_ar_button' ref={startBtn}>
+            <img
+              class='w-20 h-20'
+              src={arStartBtnPath}
+              alt='Start immersive-ar'
+            />
+          </button>
+        </div>
+      )}
+      <canvas
+        id='render-canvas'
+        ref={canvasRef}
+        class='h-screen w-screen overflow-hidden outline-none'
+      />
+    </>
   )
 }
 
