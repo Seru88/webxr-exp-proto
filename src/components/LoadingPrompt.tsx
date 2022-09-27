@@ -18,7 +18,7 @@ const LoadingPrompt: FunctionalComponent<LoadingPromptProps> = ({
         class={clsx(
           'w-full',
           'absolute',
-          'bottom-32',
+          'bottom-28',
           'flex',
           'flex-col',
           'justify-center',

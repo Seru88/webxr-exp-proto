@@ -8,6 +8,7 @@ import {
   CubeTexture,
   DirectionalLight,
   Engine,
+  HemisphericLight,
   MeshBuilder,
   PBRMaterial,
   PointerEventTypes,
@@ -27,34 +28,21 @@ import {
   WebXRHitTest,
   WebXRState
 } from '@babylonjs/core/XR'
-import modelPath from 'assets/models/car_model.glb'
-import indicatorPath from 'assets/textures/cursor.png'
-import arStartBtnPath from 'assets/ui/ar_start_button.png'
-import arExitBtnPath from 'assets/ui/ar_exit_button.png'
+import model_src from 'assets/models/car_model.glb'
+import tap_palce_texture_src from 'assets/textures/cursor.png'
+import enter_ar_btn_src from 'assets/ui/enter_ar_btn.png'
+import exit_ar_btn_src from 'assets/ui/exit_ar_btn.png'
+import pinch_icon_src from 'assets/ui/pinch_icon.png'
+import surface_icon_src from 'assets/ui/surface_icon.png'
+import tap_place_icon_src from 'assets/ui/tap_to_place_icon.png'
+import info_btn_src from 'assets/ui/info_btn.png'
 import LoadingPrompt from 'components/LoadingPrompt'
 import PromptScreen from 'components/PromptScreen'
 import { FunctionalComponent } from 'preact'
 import { RoutableProps } from 'preact-router'
 import { useEffect, useRef, useState } from 'preact/hooks'
-import pinchIconPath from 'assets/ui/pinch_icon.png'
-import surfaceIconPath from 'assets/ui/surface_icon.png'
-import tapIconPath from 'assets/ui/tap_to_place_icon.png'
 
 import type { Mesh } from '@babylonjs/core/Meshes/mesh'
-
-const camFOV = 0.8
-const camInertia = 0.9
-const camRadius = 13
-const camMinZ = 1
-const camAlpha = -Math.PI / 4
-const camBeta = Math.PI / 2
-const camLowerRadius = 5
-const camUpperRadius = 15
-const camWheelDeltaPercentage = 0.01
-const camWheelPrecision = 50
-let rootModel: Mesh | null = null
-let xr: WebXRDefaultExperience
-// let dirLight: DirectionalLight | null = null
 
 const iOS = () => {
   return (
@@ -71,20 +59,38 @@ const iOS = () => {
   )
 }
 
+const camFOV = 0.8
+const camInertia = 0.9
+const camRadius = 13
+const camMinZ = 1
+const camAlpha = -Math.PI / 4
+const camBeta = Math.PI / 3
+const camLowerRadius = 5
+const camUpperRadius = 15
+const camWheelDeltaPercentage = 0.01
+const camWheelPrecision = 50
+let rootModel: Mesh | null = null
+let xr: WebXRDefaultExperience
+// let dirLight: DirectionalLight | null = null
+
 const XrScene: FunctionalComponent<RoutableProps> = () => {
   const [arSupported, setArSupported] = useState(false)
   const [progress, setProgress] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  const [hit, setHit] = useState(false)
-  const startBtn = useRef<HTMLButtonElement | null>(null)
+  const [showInfo, setShowInfo] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const infoBtnRef = useRef<HTMLButtonElement | null>(null)
+  const exitBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const initScene = async () => {
     const canvas = canvasRef.current
+    const infoBtn = infoBtnRef.current
+    const exitBtn = exitBtnRef.current
     if (canvas) {
       const engine = new Engine(canvas, true, {
         stencil: true,
         preserveDrawingBuffer: true,
+        // iOS does not support WebGL2
         disableWebGL2Support: iOS()
       })
       engine.enableOfflineSupport = false
@@ -105,7 +111,7 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
        */
       const envHelper = scene.createDefaultEnvironment({
         createGround: false,
-        // groundColor: Color3.White(),
+        // groundColor: Color3.Gray(),
         // groundSize: 40,
         skyboxSize: 100,
         environmentTexture: hdrTexture
@@ -145,7 +151,13 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
       /**
        * Ligihting for 3d preview.
        */
-      new DirectionalLight('light', Vector3.Down(), scene)
+      new DirectionalLight('directional-light', Vector3.Down(), scene)
+      const ambLight = new HemisphericLight(
+        'ambient-light',
+        Vector3.Up(),
+        scene
+      )
+      ambLight.intensity = 0.7
 
       /**
        * Show loading screen while loading assets.
@@ -162,7 +174,7 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
       /**
        * Create hit-test indicator for AR.
        */
-      const indicatorTexture = new Texture(indicatorPath, scene)
+      const indicatorTexture = new Texture(tap_palce_texture_src, scene)
       indicatorTexture.hasAlpha = true
       const indicatorMat = new StandardMaterial('indicator-mat', scene)
       indicatorMat.diffuseTexture = indicatorTexture
@@ -182,7 +194,7 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
        */
       SceneLoader.ImportMesh(
         '',
-        modelPath,
+        model_src,
         '',
         scene,
         (meshes, pS, skl, animationsGroup) => {
@@ -425,12 +437,21 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
           }
         }
 
+        /**
+         * React to XR state changes accordingly
+         */
         xr.baseExperience.onStateChangedObservable.add(xrState => {
           if (rootModel) {
             switch (xrState) {
               case WebXRState.ENTERING_XR:
                 camera.detachControl()
+                // Make sure to re-attach pointer selection
+                xr.pointerSelection.attach()
                 break
+              case WebXRState.EXITING_XR: {
+                pointerCache.clear()
+                break
+              }
               case WebXRState.IN_XR:
                 transNode.setEnabled(false)
                 rootModel.scalingDeterminant = 0.25
@@ -448,14 +469,28 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
                 const bInfo = rootModel.buildBoundingInfo(min, max)
                 rootModel.setBoundingInfo(bInfo)
                 camera.setTarget(rootModel, true, false, true)
-                // camera.setTarget(transNode.position)
                 camera.radius = camRadius
                 camera.alpha = camAlpha
                 camera.beta = camBeta
+                setShowInfo(false)
                 break
               }
             }
           }
+        })
+      }
+
+      /**
+       * Prevent scene pointer events on WebXRDomOverlay elements
+       */
+      if (infoBtn) {
+        infoBtn.addEventListener('beforexrselect', () => {
+          xr.pointerSelection.detach()
+        })
+      }
+      if (exitBtn) {
+        exitBtn.addEventListener('beforexrselect', () => {
+          xr.pointerSelection.detach()
         })
       }
 
@@ -469,14 +504,39 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
     }
   }
 
+  const handleEnterArBtnClick = () => {
+    if (xr) {
+      xr.baseExperience.enterXRAsync('immersive-ar', 'local-floor')
+    }
+  }
+
+  const handleInfoBtnClick = () => {
+    setShowInfo(prev => !prev)
+    if (xr) {
+      if (showInfo) {
+        setTimeout(() => {
+          xr.pointerSelection.attach()
+        }, 100)
+      }
+    }
+  }
+
+  const handleExitArBtnClick = () => {
+    if (xr) {
+      // if (xr.pointerSelection.attached === false) {
+      //   xr.pointerSelection.attach()
+      // }
+      xr.baseExperience.exitXRAsync()
+    }
+    // setShowInfo(false)
+  }
+
   useEffect(() => {
     initScene()
     if (navigator.xr) {
-      navigator.xr
-        .isSessionSupported('immersive-ar')
-        .then((isSupported: boolean) => {
-          setArSupported(isSupported)
-        })
+      navigator.xr.isSessionSupported('immersive-ar').then(isSupported => {
+        setArSupported(isSupported)
+      })
     }
   }, [])
 
@@ -498,19 +558,8 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
       />
       {arSupported && (
         <div class='z-[12] absolute bottom-10 w-full flex justify-center'>
-          <button
-            id='start_ar_button'
-            ref={startBtn}
-            onClick={() => {
-              if (xr)
-                xr.baseExperience.enterXRAsync('immersive-ar', 'local-floor')
-            }}
-          >
-            <img
-              class='w-[230px]'
-              src={arStartBtnPath}
-              alt='Start immersive-ar'
-            />
+          <button id='start_ar_button' onClick={handleEnterArBtnClick}>
+            <img class='h-9' src={enter_ar_btn_src} alt='Start AR' />
           </button>
         </div>
       )}
@@ -521,31 +570,40 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
       />
       <div
         id='ar-overlay'
-        class='z-[-12] relative w-screen h-screen p-4 flex flex-col justify-center items-center'
+        class='z-[-12] absolute top-0 w-screen h-screen p-4 flex flex-col justify-center items-center'
       >
         <div>
-          {!hit && (
-            <div
-              class='max-w-[295] rounded-lg shadow-lg bg-white'
-              onClick={() => setHit(true)}
-            >
-              <div class='uppercase text-center my-2'>Instructions</div>
+          <button
+            id='info'
+            ref={infoBtnRef}
+            class='absolute top-5 right-5'
+            onClick={handleInfoBtnClick}
+          >
+            <img
+              class='w-14 h-14'
+              src={info_btn_src}
+              alt='Start immersive-ar'
+            />
+          </button>
+          {showInfo && (
+            <div class='max-w-[295] rounded-lg shadow-lg bg-white'>
+              <div class='uppercase text-center py-3'>Instructions</div>
               <hr />
               <div class='p-4'>
                 <div class='w-full flex items-center mt-1 mb-4'>
-                  <img class='w-12' src={surfaceIconPath} alt='' />
+                  <img class='w-12' src={surface_icon_src} alt='' />
                   <div class='flex-grow ml-3'>
                     Point at a horizontal surface to detect it.
                   </div>
                 </div>
                 <div class='w-full flex items-center my-3'>
-                  <img class='w-12' src={tapIconPath} alt='' />
+                  <img class='w-12' src={tap_place_icon_src} alt='' />
                   <div class='flex-grow ml-3'>Tap screen to place model.</div>
                 </div>
                 <div class='w-full flex items-center mb-1 mt-4'>
-                  <img class='w-12' src={pinchIconPath} alt='' />
+                  <img class='w-12' src={pinch_icon_src} alt='' />
                   <div class='flex-grow ml-3'>
-                    You can pich to scale, rotate and drag to move the model.
+                    You can pinch to scale, rotate and drag to move the model.
                   </div>
                 </div>
               </div>
@@ -553,15 +611,13 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
           )}
           <button
             id='exit'
+            ref={exitBtnRef}
             class='absolute bottom-5 right-5'
-            ref={startBtn}
-            onClick={() => {
-              if (xr) xr.baseExperience.exitXRAsync()
-            }}
+            onClick={handleExitArBtnClick}
           >
             <img
               class='w-14 h-14'
-              src={arExitBtnPath}
+              src={exit_ar_btn_src}
               alt='Start immersive-ar'
             />
           </button>

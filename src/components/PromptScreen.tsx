@@ -1,5 +1,5 @@
-import iconSrc from 'assets/ui/ford_icon.jpg'
-import logoSrc from 'assets/ui/pr_logo.png'
+import forc_icon_src from 'assets/ui/ford_icon.jpg'
+import pr_logo_src from 'assets/ui/pr_logo.png'
 import clsx from 'clsx'
 import { FunctionalComponent, JSX } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
@@ -30,28 +30,22 @@ const PromptScreen: FunctionalComponent<PromptScreenProps> = ({
       id='prompt-screen'
       class={clsx(
         'absolute',
-
-        // 'top-0',
-        // 'bottom-0',
-        // 'left-0',
-        // 'right-0',
-        'w-full',
-        'h-full',
+        'w-screen',
+        'h-screen',
         'bg-white',
         'transition-opacity',
         'ease-in',
         'duration-300',
-        // 'delay-75',
         show ? 'opacity-100' : 'opacity-0',
         'z-[9999]'
       )}
     >
       <div class='absolute min-w-full flex flex-col justify-center items-center top-16'>
-        <img class='w-[250px] h-auto' src={iconSrc} alt='Ford' />
+        <img class='w-[250px] h-auto' src={forc_icon_src} alt='Ford' />
       </div>
       {prompt}
-      <div class='absolute bottom-6 w-full flex items-center justify-center'>
-        <img class='max-w-[128px]' src={logoSrc} alt='Post Reality' />
+      <div class='absolute bottom-5 w-full flex items-center justify-center'>
+        <img class='max-w-[128px]' src={pr_logo_src} alt='Post Reality' />
       </div>
     </div>
   )
