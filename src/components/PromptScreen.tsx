@@ -29,23 +29,27 @@ const PromptScreen: FunctionalComponent<PromptScreenProps> = ({
     <div
       id='prompt-screen'
       class={clsx(
-        'absolute',
+        'fixed',
         'w-screen',
-        'h-screen',
+        'h-full',
+        'flex',
+        'flex-col',
         'bg-white',
+        'z-[9999]',
         'transition-opacity',
         'ease-in',
         'duration-300',
-        show ? 'opacity-100' : 'opacity-0',
-        'z-[9999]'
+        show ? 'opacity-100' : 'opacity-0'
       )}
     >
-      <div class='absolute min-w-full flex flex-col justify-center items-center top-16'>
-        <img class='w-[250px] h-auto' src={forc_icon_src} alt='Ford' />
+      <div class='basis-9/12 flex flex-col justify-center items-center'>
+        <img class='w-auto h-auto' src={forc_icon_src} alt='Ford' />
       </div>
-      {prompt}
-      <div class='absolute bottom-5 w-full flex items-center justify-center'>
-        <img class='max-w-[128px]' src={pr_logo_src} alt='Post Reality' />
+      <div class='basis-2/12 flex flex-col justify-center items-center'>
+        {prompt}
+      </div>
+      <div class='basis-1/12 flex flex-col justify-center items-center'>
+        <img class='max-w-[96px]' src={pr_logo_src} alt='Post Reality' />
       </div>
     </div>
   )

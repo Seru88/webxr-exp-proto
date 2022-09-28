@@ -9,11 +9,9 @@ const Home: FunctionalComponent<RoutableProps> = () => {
     <PromptScreen
       show={true}
       prompt={
-        <div class='w-full absolute bottom-28 flex justify-center'>
-          <Link href='/xr'>
-            <img class='h-9' src={start_btn_src} alt='start' />
-          </Link>
-        </div>
+        <Link href='/xr'>
+          <img class='h-20' src={start_btn_src} alt='start' />
+        </Link>
       }
     />
   )

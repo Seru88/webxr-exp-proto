@@ -16,15 +16,12 @@ const LoadingPrompt: FunctionalComponent<LoadingPromptProps> = ({
     <>
       <div
         class={clsx(
-          'w-full',
-          'absolute',
-          'bottom-28',
           'flex',
           'flex-col',
           'justify-center',
           'items-center',
           'text-black',
-          'text-md',
+          // 'text-sm',
           'uppercase',
           'font-semibold'
         )}

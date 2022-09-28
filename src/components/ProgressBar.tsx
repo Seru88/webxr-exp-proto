@@ -9,7 +9,7 @@ const ProgressBar: FunctionalComponent<ProgressBarProps> = ({ value }) => {
   return (
     <div
       id='progress-bar'
-      class='w-24 h-4 mt-2 mx-auto bg-black p-[3px] rounded-lg scale-125'
+      class='w-28 h-4 mt-2 bg-[#216d6f] p-[3px] rounded-lg scale-125'
     >
       <div
         id='progress-bar-rail'

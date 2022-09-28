@@ -34,8 +34,10 @@ import enter_ar_btn_src from 'assets/ui/enter_ar_btn.png'
 import exit_ar_btn_src from 'assets/ui/exit_ar_btn.png'
 import pinch_icon_src from 'assets/ui/pinch_icon.png'
 import surface_icon_src from 'assets/ui/surface_icon.png'
+import darg_icon_src from 'assets/ui/drag_icon.png'
 import tap_place_icon_src from 'assets/ui/tap_to_place_icon.png'
 import info_btn_src from 'assets/ui/info_btn.png'
+import pr_logo_src from 'assets/ui/pr_logo.png'
 import LoadingPrompt from 'components/LoadingPrompt'
 import PromptScreen from 'components/PromptScreen'
 import { FunctionalComponent } from 'preact'
@@ -64,11 +66,12 @@ const camInertia = 0.9
 const camRadius = 13
 const camMinZ = 1
 const camAlpha = -Math.PI / 4
-const camBeta = Math.PI / 3
+const camBeta = Math.PI / 2.5
 const camLowerRadius = 5
 const camUpperRadius = 15
 const camWheelDeltaPercentage = 0.01
 const camWheelPrecision = 50
+let scene: Scene
 let rootModel: Mesh | null = null
 let xr: WebXRDefaultExperience
 // let dirLight: DirectionalLight | null = null
@@ -79,13 +82,13 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [showInfo, setShowInfo] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const infoBtnRef = useRef<HTMLButtonElement | null>(null)
-  const exitBtnRef = useRef<HTMLButtonElement | null>(null)
+  const arInfoBtnRef = useRef<HTMLButtonElement | null>(null)
+  const arExitBtnRef = useRef<HTMLButtonElement | null>(null)
 
   const initScene = async () => {
     const canvas = canvasRef.current
-    const infoBtn = infoBtnRef.current
-    const exitBtn = exitBtnRef.current
+    const infoBtn = arInfoBtnRef.current
+    const exitBtn = arExitBtnRef.current
     if (canvas) {
       const engine = new Engine(canvas, true, {
         stencil: true,
@@ -94,7 +97,7 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
         disableWebGL2Support: iOS()
       })
       engine.enableOfflineSupport = false
-      const scene = new Scene(engine)
+      scene = new Scene(engine)
 
       /**
        * Environment texture for 3d preview/skybox.
@@ -510,7 +513,7 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
     }
   }
 
-  const handleInfoBtnClick = () => {
+  const handleInfoToggle = () => {
     setShowInfo(prev => !prev)
     if (xr) {
       if (showInfo) {
@@ -523,12 +526,8 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
 
   const handleExitArBtnClick = () => {
     if (xr) {
-      // if (xr.pointerSelection.attached === false) {
-      //   xr.pointerSelection.attach()
-      // }
       xr.baseExperience.exitXRAsync()
     }
-    // setShowInfo(false)
   }
 
   useEffect(() => {
@@ -540,8 +539,14 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
     }
   }, [])
 
+  useEffect(() => {
+    return () => {
+      scene.dispose()
+    }
+  }, [])
+
   return (
-    <>
+    <div class='fixed w-screen h-full'>
       <PromptScreen
         show={isLoading}
         prompt={
@@ -556,13 +561,55 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
           />
         }
       />
+      <button
+        id='preview-info-btn'
+        class='absolute top-0 right-0'
+        onClick={handleInfoToggle}
+      >
+        <img class='w-16 h-16' src={info_btn_src} alt='Start immersive-ar' />
+      </button>
       {arSupported && (
-        <div class='z-[12] absolute bottom-10 w-full flex justify-center'>
+        <div class='absolute bottom-20 w-full flex justify-center'>
           <button id='start_ar_button' onClick={handleEnterArBtnClick}>
-            <img class='h-9' src={enter_ar_btn_src} alt='Start AR' />
+            <img class='h-16' src={enter_ar_btn_src} alt='Start AR' />
           </button>
         </div>
       )}
+      <img
+        class='max-w-[96px] absolute bottom-1 left-1'
+        src={pr_logo_src}
+        alt='Post Reality'
+      />
+      {showInfo && (
+        <div class='absolute top-0 w-screen h-screen px-6 flex flex-col justify-center items-center bg-[#000000AA]'>
+          <div class='max-w-[295] rounded-lg shadow-lg bg-white'>
+            <div class='uppercase text-center text-lg py-3'>Instructions</div>
+            <hr />
+            <div class='p-4 text-sm shadow-inner'>
+              <div class='w-full flex items-center mt-1 mb-5'>
+                <img class='w-11' src={darg_icon_src} alt='' />
+                <div class='flex-grow ml-6 mr-6'>
+                  Drag left and right to change the angle.
+                </div>
+              </div>
+              <div class='w-full flex items-center mb-1 mt-5'>
+                <img class='w-11' src={pinch_icon_src} alt='' />
+                <div class='flex-grow ml-6 mr-6'>
+                  Pinch to move the model closer or further away.
+                </div>
+              </div>
+            </div>
+            <hr />
+            <button
+              class='text-center w-full py-3 font-semibold uppercase'
+              onClick={handleInfoToggle}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       <canvas
         id='render-canvas'
         ref={canvasRef}
@@ -570,60 +617,74 @@ const XrScene: FunctionalComponent<RoutableProps> = () => {
       />
       <div
         id='ar-overlay'
-        class='z-[-12] absolute top-0 w-screen h-screen p-4 flex flex-col justify-center items-center'
+        class='z-[-12] absolute top-0 w-screen h-screen px-6 flex flex-col justify-center items-center bg-[#000000AA]'
       >
         <div>
           <button
-            id='info'
-            ref={infoBtnRef}
-            class='absolute top-5 right-5'
-            onClick={handleInfoBtnClick}
+            id='ar-view-info-btn'
+            ref={arInfoBtnRef}
+            class='absolute top-0 right-0'
+            onClick={handleInfoToggle}
           >
             <img
-              class='w-14 h-14'
+              class='w-16 h-16'
               src={info_btn_src}
               alt='Start immersive-ar'
             />
           </button>
           {showInfo && (
             <div class='max-w-[295] rounded-lg shadow-lg bg-white'>
-              <div class='uppercase text-center py-3'>Instructions</div>
+              <div class='uppercase text-center py-3 text-lg'>Instructions</div>
               <hr />
-              <div class='p-4'>
+              <div class='p-4 text-sm shadow-inner'>
                 <div class='w-full flex items-center mt-1 mb-4'>
-                  <img class='w-12' src={surface_icon_src} alt='' />
-                  <div class='flex-grow ml-3'>
+                  <img class='w-11' src={surface_icon_src} alt='' />
+                  <div class='flex-grow ml-6 mr-6'>
                     Point at a horizontal surface to detect it.
                   </div>
                 </div>
-                <div class='w-full flex items-center my-3'>
-                  <img class='w-12' src={tap_place_icon_src} alt='' />
-                  <div class='flex-grow ml-3'>Tap screen to place model.</div>
+                <div class='w-full flex items-center my-2'>
+                  <img class='w-11' src={tap_place_icon_src} alt='' />
+                  <div class='flex-grow ml-6 mr-6'>
+                    Tap screen to place model.
+                  </div>
                 </div>
                 <div class='w-full flex items-center mb-1 mt-4'>
-                  <img class='w-12' src={pinch_icon_src} alt='' />
-                  <div class='flex-grow ml-3'>
+                  <img class='w-11' src={pinch_icon_src} alt='' />
+                  <div class='flex-grow ml-6 mr-6'>
                     You can pinch to scale, rotate and drag to move the model.
                   </div>
                 </div>
               </div>
+              <hr />
+              <button
+                class='text-center w-full py-3 font-semibold uppercase'
+                onClick={handleInfoToggle}
+              >
+                Close
+              </button>
             </div>
           )}
           <button
             id='exit'
-            ref={exitBtnRef}
-            class='absolute bottom-5 right-5'
+            ref={arExitBtnRef}
+            class='absolute top-0 left-0'
             onClick={handleExitArBtnClick}
           >
             <img
-              class='w-14 h-14'
+              class='w-16 h-16'
               src={exit_ar_btn_src}
               alt='Start immersive-ar'
             />
           </button>
+          <img
+            class='max-w-[96px] absolute bottom-1 left-1'
+            src={pr_logo_src}
+            alt='Post Reality'
+          />
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
