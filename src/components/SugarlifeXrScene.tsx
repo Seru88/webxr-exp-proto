@@ -47,8 +47,8 @@ const startScale = Vector3.Zero() // Initial scale value for our model
 const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
 const xrControllerConfig = {
-  enableLighting: true,
-  disableWorldTracking: true
+  enableLighting: true
+  // disableWorldTracking: true
 }
 
 export const SugarlifeXrScene = () => {

@@ -4,7 +4,7 @@ import { FunctionalComponent } from 'preact'
 const PoweredByPostReality: FunctionalComponent = () => {
   return (
     <img
-      class='max-w-[72px]'
+      class='max-w-[72px] h-auto'
       src={powered_by_src}
       alt='Powered by Post Reality'
     />

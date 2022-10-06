@@ -16,6 +16,7 @@ import {
   Quaternion,
   Scene,
   SceneLoader,
+  Sound,
   StandardMaterial,
   Texture,
   TransformNode,
@@ -28,23 +29,25 @@ import {
   WebXRHitTest,
   WebXRState
 } from '@babylonjs/core/XR'
+import bgm_src from 'assets/audio/ford_bgm.mp3'
 import model_src from 'assets/models/car_model.glb'
 import tap_palce_texture_src from 'assets/textures/ford_cursor.png'
 import darg_icon_src from 'assets/ui/drag_icon.png'
 import enter_ar_btn_src from 'assets/ui/enter_ar_btn.png'
 import exit_ar_btn_src from 'assets/ui/exit_ar_btn.png'
 import info_btn_src from 'assets/ui/ford_info_btn.png'
+import tap_place_icon_src from 'assets/ui/ford_taptoplace_icon.png'
 import pinch_icon_src from 'assets/ui/pinch_icon.png'
 import pr_logo_src from 'assets/ui/pr_logo.png'
 import surface_icon_src from 'assets/ui/surface_icon.png'
-import tap_place_icon_src from 'assets/ui/ford_taptoplace_icon.png'
 import LoadingIndicator from 'components/LoadingIndicator'
 import SplashOverlay from 'components/SplashOverlay'
 import { FunctionalComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
-import type { Mesh } from '@babylonjs/core/Meshes/mesh'
 import Dialog from './Dialog'
+
+import type { Mesh } from '@babylonjs/core/Meshes/mesh'
 const iOS = () => {
   return (
     [
@@ -72,6 +75,7 @@ const camWheelDeltaPercentage = 0.01
 const camWheelPrecision = 50
 let scene: Scene
 let rootModel: Mesh | null = null
+let bgm: Sound
 let xr: WebXRDefaultExperience
 // let dirLight: DirectionalLight | null = null
 
@@ -162,12 +166,6 @@ const FordXrScene: FunctionalComponent = () => {
       ambLight.intensity = 0.7
 
       /**
-       * Show loading screen while loading assets.
-       */
-      // engine.loadingScreen = new CustomSceneLoadingScreen(loadingScreen)
-      // engine.displayLoadingUI()
-
-      /**
        * Create transform node for easier model manipulation.
        */
       const transNode = new TransformNode('trans-node', scene)
@@ -191,6 +189,12 @@ const FordXrScene: FunctionalComponent = () => {
       indicator.material = indicatorMat
       indicator.setEnabled(false)
 
+      bgm = new Sound('bgm', bgm_src, scene, null, {
+        loop: true,
+        autoplay: false,
+        volume: 0.5
+      })
+
       /**
        * Load model
        */
@@ -212,6 +216,7 @@ const FordXrScene: FunctionalComponent = () => {
           const bInfo = rootModel.buildBoundingInfo(min, max)
           rootModel.setBoundingInfo(bInfo)
           camera.setTarget(rootModel, true, false, true)
+          bgm.play()
           // camera.setTarget(transNode.position)
           // engine.hideLoadingUI()
         },
