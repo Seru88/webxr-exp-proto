@@ -38,7 +38,6 @@ import exit_ar_btn_src from 'assets/ui/exit_ar_btn.png'
 import info_btn_src from 'assets/ui/ford_info_btn.png'
 import tap_place_icon_src from 'assets/ui/ford_taptoplace_icon.png'
 import pinch_icon_src from 'assets/ui/pinch_icon.png'
-import pr_logo_src from 'assets/ui/pr_logo.png'
 import surface_icon_src from 'assets/ui/surface_icon.png'
 import LoadingIndicator from 'components/LoadingIndicator'
 import SplashOverlay from 'components/SplashOverlay'
@@ -217,9 +216,9 @@ const FordXrScene: FunctionalComponent = () => {
           const bInfo = rootModel.buildBoundingInfo(min, max)
           rootModel.setBoundingInfo(bInfo)
           camera.setTarget(rootModel, true, false, true)
-          bgm.play()
-          // camera.setTarget(transNode.position)
-          // engine.hideLoadingUI()
+          setTimeout(() => {
+            bgm.play()
+          }, 350)
         },
         xhr => {
           setProgress((xhr.loaded / xhr.total) * 100)
@@ -569,11 +568,9 @@ const FordXrScene: FunctionalComponent = () => {
           </button>
         </div>
       )}
-      <img
-        class='max-w-[96px] absolute bottom-1 left-1'
-        src={pr_logo_src}
-        alt='Post Reality'
-      />
+      <div class='absolute bottom-2 left-2 pointer-events-none'>
+        <PoweredByPostReality />
+      </div>
       <Dialog open={showInfo}>
         <div class='uppercase text-center text-lg py-3'>Instructions</div>
         <hr />
@@ -616,11 +613,7 @@ const FordXrScene: FunctionalComponent = () => {
             class='absolute top-0 right-0'
             onClick={handleInfoToggle}
           >
-            <img
-              class='w-16 h-16'
-              src={info_btn_src}
-              alt='Start immersive-ar'
-            />
+            <img class='w-16 h-16' src={info_btn_src} alt='Instructions' />
           </button>
           {/* {showInfo && (
             <div class='max-w-[295] rounded-lg shadow-lg bg-white'>
@@ -698,11 +691,6 @@ const FordXrScene: FunctionalComponent = () => {
               alt='Start immersive-ar'
             />
           </button>
-          <img
-            class='max-w-[96px] absolute bottom-1 left-1'
-            src={pr_logo_src}
-            alt='Post Reality'
-          />
           <div class='absolute bottom-2 left-2 pointer-events-none'>
             <PoweredByPostReality />
           </div>

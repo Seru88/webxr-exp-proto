@@ -100,9 +100,11 @@ export const SugarlifeXrScene = () => {
     placeCursor.scaling.x = -1
     placeCursor.material = cursorMat
 
-    bgm = new Sound('bgm', bgmPath, scene)
-    bgm.loop = true
-    bgm.setVolume(0.2)
+    bgm = new Sound('bgm', bgmPath, scene, null, {
+      loop: true,
+      autoplay: false,
+      volume: 0.5
+    })
 
     bannerVidTex = new VideoTexture(
       'banner-vid',
@@ -287,6 +289,12 @@ export const SugarlifeXrScene = () => {
       load()
     } else {
       window.addEventListener('xrextrasloaded', load)
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (scene) scene.dispose()
     }
   }, [])
 

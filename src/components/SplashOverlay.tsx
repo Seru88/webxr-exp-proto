@@ -3,10 +3,10 @@ import { FunctionalComponent } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
 import PoweredByPostReality from './PoweredByPostReality'
 
-import booth_bg from 'assets/ui/booth_bg.png'
+import booth_bg from 'assets/ui/booth_bg.jpg'
 import sugarlife_bg from 'assets/ui/sugarlife_bg.jpg'
 
-import ford_brand from 'assets/ui/ford_icon.jpg'
+import ford_brand_src from 'assets/ui/ford_icon.jpg'
 
 type SplashOverlayProps = {
   open: boolean
@@ -64,7 +64,7 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
     >
       <div class='basis-9/12 flex flex-col justify-center items-center'>
         {variant === 'ford' && (
-          <img class='w-auto h-auto' src={ford_brand} alt='' />
+          <img class='w-auto h-auto' src={ford_brand_src} alt='' />
         )}
       </div>
       <div class='basis-2/12 flex flex-col justify-center items-center'>

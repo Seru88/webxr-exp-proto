@@ -1,13 +1,13 @@
+import android_icon_src from 'assets/ui/android_icon.svg'
+import booth_bg_src from 'assets/ui/booth_bg.jpg'
+import chrome_icon_src from 'assets/ui/chrome_icon.svg'
+import ford_bg_src from 'assets/ui/ford_icon.jpg'
+import iOS_icon_src from 'assets/ui/iOS_icon.svg'
+import sugarlife_bg_src from 'assets/ui/sugarlife_bg.jpg'
+import PoweredByPostReality from 'components/PoweredByPostReality'
 import { FunctionalComponent } from 'preact'
 import { RoutableProps } from 'preact-router'
 import { Link } from 'preact-router/match'
-import sugarlife_bg_src from 'assets/ui/sugarlife_bg.jpg'
-import booth_bg_src from 'assets/ui/booth_bg.png'
-import ford_bg_src from 'assets/ui/ford_icon.jpg'
-import PoweredByPostReality from 'components/PoweredByPostReality'
-import iOS_icon_src from 'assets/ui/iOS_icon.svg'
-import android_icon_src from 'assets/ui/android_icon.svg'
-import chrome_icon_src from 'assets/ui/chrome_icon.svg'
 
 const Home: FunctionalComponent<RoutableProps> = () => {
   return (

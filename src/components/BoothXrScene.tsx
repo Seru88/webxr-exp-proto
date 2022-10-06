@@ -457,6 +457,12 @@ export const BoothXrScene = () => {
     }
   }, [])
 
+  useEffect(() => {
+    return () => {
+      if (scene) scene.dispose()
+    }
+  }, [])
+
   return (
     <>
       <SplashOverlay open={!started} variant='booth'>
