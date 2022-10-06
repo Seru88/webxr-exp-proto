@@ -20,7 +20,11 @@ const StartButton: FunctionalComponent<StartButtonProps> = ({
         'Start'
       ) : (
         <img
-          class={variant === 'ford' ? 'max-w-[196px]' : 'max-w-[156px]'}
+          class={
+            variant === 'ford'
+              ? 'max-w-[196px]'
+              : 'max-w-[156px] shadow-lg rounded-lg'
+          }
           src={variant === 'ford' ? ford_start_btn_src : booth_start_btn_src}
           alt='Start Experience'
         />
