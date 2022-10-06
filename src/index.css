@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply uppercase text-2xl font-bold border-2 transition-colors shadow-lg
+  }
+  .btn-booth {
+    @apply py-0 px-6 rounded-md text-white bg-booth border-white hover:text-booth hover:bg-white
+  }
+  .btn-sugarlife {
+    @apply py-2.5 px-5 rounded-xl text-sugarlife bg-white border-sugarlife hover:text-white hover:bg-sugarlife
+  }
+}
+
+#requestingCameraPermissions {
+  background-color: #e2677f;
+}
+
+#loadBackground {
+  /* background-image: url('/img/background.jpg'); */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: none;
+}
+
+.spin {
+  display: none;
+}
+
+ .poweredby-img {
+  display: none;
+} 
+
+.prompt-box-8w {
+  background-color: #e2677f;
+}

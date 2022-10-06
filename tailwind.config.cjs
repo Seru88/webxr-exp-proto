@@ -8,10 +8,11 @@ module.exports = {
         indeterminate: 'indeterminate 1s infinite linear'
       },
       colors: {
-        transparent: 'transparent',
-        current: 'currentColor',
         main: 'rgb(61,155,233)',
-        secondary: 'rgb(255, 142, 44)'
+        secondary: 'rgb(255, 142, 44)',
+        booth: '#62214b',
+        sugarlife: '#E2677F',
+        ford: '#216d6f'
       },
       keyframes: {
         indeterminate: {
@@ -28,10 +29,10 @@ module.exports = {
             width: '100%'
           }
         }
+      },
+      fontFamily: {
+        sans: ['Montserrat', 'sans-serif']
       }
-    },
-    fontFamily: {
-      sans: ['Montserrat', 'sans-serif']
     }
   },
   plugins: [require('@tailwindcss/typography')]

@@ -1,8 +1,8 @@
+import LoadingIndicator from 'components/LoadingIndicator'
+import SplashOverlay from 'components/SplashOverlay'
+import AsyncRoute from 'preact-async-route'
 import Router from 'preact-router'
 import Home from 'routes/Home'
-import AsyncRoute from 'preact-async-route'
-import PromptScreen from 'components/PromptScreen'
-import LoadingPrompt from 'components/LoadingPrompt'
 
 export function App() {
   return (
@@ -10,24 +10,36 @@ export function App() {
       <Router>
         <Home path='/' />
         <AsyncRoute
-          path='/xr'
+          path='/booth'
           getComponent={() =>
-            import('routes/XrScene').then(module => module.default)
+            import('routes/Booth').then(module => module.default)
           }
           loading={() => (
-            <PromptScreen
-              show
-              prompt={
-                <LoadingPrompt
-                  message={
-                    <>
-                      <h6>Loading</h6>
-                      <h6>Experience</h6>
-                    </>
-                  }
-                />
-              }
-            />
+            <SplashOverlay open variant='booth'>
+              <LoadingIndicator variant='booth' showText={false} />
+            </SplashOverlay>
+          )}
+        />
+        <AsyncRoute
+          path='/ford'
+          getComponent={() =>
+            import('routes/Ford').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='ford'>
+              <LoadingIndicator variant='ford' showText={false} />
+            </SplashOverlay>
+          )}
+        />
+        <AsyncRoute
+          path='/sugarlife'
+          getComponent={() =>
+            import('routes/Sugarlife').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='sugarlife'>
+              <LoadingIndicator variant='sugarlife' showText={false} />
+            </SplashOverlay>
           )}
         />
       </Router>
