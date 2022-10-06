@@ -46,6 +46,7 @@ import { FunctionalComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
 import Dialog from './Dialog'
+import PoweredByPostReality from './PoweredByPostReality'
 
 import type { Mesh } from '@babylonjs/core/Meshes/mesh'
 const iOS = () => {
@@ -702,6 +703,9 @@ const FordXrScene: FunctionalComponent = () => {
             src={pr_logo_src}
             alt='Post Reality'
           />
+          <div class='absolute bottom-2 left-2 pointer-events-none'>
+            <PoweredByPostReality />
+          </div>
         </div>
       </div>
     </div>
