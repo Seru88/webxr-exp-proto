@@ -3,6 +3,7 @@ import '@babylonjs/core/Materials/Textures/Loaders/envTextureLoader'
 import '@babylonjs/loaders/glTF'
 
 import {
+  AnimationGroup,
   ArcRotateCamera,
   Color3,
   CubeTexture,
@@ -76,6 +77,7 @@ const camWheelPrecision = 50
 let scene: Scene
 let rootModel: Mesh | null = null
 let bgm: Sound
+let animGroup: AnimationGroup
 let xr: WebXRDefaultExperience
 // let dirLight: DirectionalLight | null = null
 
@@ -189,11 +191,51 @@ const FordXrScene: FunctionalComponent = () => {
       indicator.material = indicatorMat
       indicator.setEnabled(false)
 
+      /**
+       * Create BGM
+       */
       bgm = new Sound('bgm', bgm_src, scene, null, {
         loop: true,
         autoplay: false,
         volume: 0.5
       })
+
+      // /**
+      //  * Create Door GUI
+      //  */
+      // const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI('UI')
+      // advancedTexture.idealWidth = 600
+      // const rect1 = new Rectangle()
+      // rect1.width = 0.25
+      // rect1.height = '40px'
+      // rect1.cornerRadius = 20
+      // rect1.color = 'white'
+      // rect1.thickness = 3
+      // rect1.background = '#216d6f'
+      // advancedTexture.addControl(rect1)
+      // // rect1.linkWithMesh(sphere);
+      // rect1.linkOffsetY = -50
+      // rect1.linkOffsetX = 100
+      // const label = new TextBlock()
+      // label.text = 'Open'
+      // rect1.addControl(label)
+      // const target = new Ellipse()
+      // target.width = '20px'
+      // target.height = '20px'
+      // target.color = 'white'
+      // target.thickness = 3
+      // target.background = '#216d6f'
+      // advancedTexture.addControl(target)
+      // // target.linkWithMesh(sphere)
+      // const line = new Line()
+      // line.lineWidth = 3
+      // line.color = 'white'
+      // line.y2 = 20
+      // line.linkOffsetY = -5
+      // line.linkOffsetX = 7
+      // advancedTexture.addControl(line)
+      // // line.linkWithMesh(sphere)
+      // line.connectedControl = rect1
 
       /**
        * Load model
@@ -205,10 +247,21 @@ const FordXrScene: FunctionalComponent = () => {
         scene,
         (meshes, pS, skl, animationsGroup) => {
           setIsLoading(false)
-          animationsGroup[0].stop()
+          animGroup = animationsGroup[0]
+          animGroup.stop()
+          animGroup.onAnimationEndObservable.add(() => {
+            animGroup.speedRatio = -animGroup.speedRatio
+          })
           rootModel = meshes[0] as Mesh
           for (const mesh of meshes) {
-            mesh.isPickable = false
+            if (mesh.name.includes('left_')) {
+              mesh.isPickable = true
+            } else mesh.isPickable = false
+            // if (mesh.name === 'left_handle_primitive0') {
+            //   rect1.linkWithMesh(mesh)
+            //   target.linkWithMesh(mesh)
+            //   line.linkWithMesh(mesh)
+            // }
           }
           rootModel.parent = transNode
           rootModel.rotate(Vector3.Up(), Math.PI)
@@ -228,7 +281,7 @@ const FordXrScene: FunctionalComponent = () => {
       /**
        * Ground for dragging gesture.
        */
-      const dragGround = MeshBuilder.CreateGround('drag-groudn', {
+      const dragGround = MeshBuilder.CreateGround('drag-ground', {
         width: 150,
         height: 150
       })
@@ -487,6 +540,25 @@ const FordXrScene: FunctionalComponent = () => {
         })
       }
 
+      scene.onPointerDown = () => {
+        const result = scene.pick(
+          scene.pointerX,
+          scene.pointerY,
+          mesh => mesh.name.includes('left_')
+          // mesh.name !== 'drag-ground' && mesh.name !== 'BackgroundSkybox'
+        )
+        if (result?.hit) {
+          console.log(result.pickedMesh)
+          if (!animGroup.isPlaying) {
+            animGroup.play()
+          }
+        }
+      }
+
+      engine.runRenderLoop(() => {
+        scene.render()
+      })
+
       /**
        * Prevent scene pointer events on WebXRDomOverlay elements
        */
@@ -500,10 +572,6 @@ const FordXrScene: FunctionalComponent = () => {
           xr.pointerSelection.detach()
         })
       }
-
-      engine.runRenderLoop(() => {
-        scene.render()
-      })
 
       window.addEventListener('resize', () => {
         engine.resize()
@@ -615,7 +683,7 @@ const FordXrScene: FunctionalComponent = () => {
           >
             <img class='w-16 h-16' src={info_btn_src} alt='Instructions' />
           </button>
-          {/* {showInfo && (
+          {showInfo && (
             <div class='max-w-[295] rounded-lg shadow-lg bg-white'>
               <div class='uppercase text-center py-3 text-lg'>Instructions</div>
               <hr />
@@ -647,8 +715,8 @@ const FordXrScene: FunctionalComponent = () => {
                 Close
               </button>
             </div>
-          )} */}
-          <Dialog open={showInfo}>
+          )}
+          {/* <Dialog open={showInfo}>
             <div class='uppercase text-center py-3 text-lg'>Instructions</div>
             <hr />
             <div class='p-4 text-sm shadow-inner'>
@@ -678,7 +746,7 @@ const FordXrScene: FunctionalComponent = () => {
             >
               Close
             </button>
-          </Dialog>
+          </Dialog> */}
           <button
             id='exit'
             ref={arExitBtnRef}
