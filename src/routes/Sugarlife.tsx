@@ -1,3 +1,4 @@
+import BackToGalleryLink from 'components/BackToGalleryLink'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
 import { SugarlifeXrScene } from 'components/SugarlifeXrScene'
@@ -15,8 +16,9 @@ const Sugarlife: FunctionalComponent<RoutableProps> = () => {
   if (start) return <SugarlifeXrScene />
 
   return (
-    <SplashOverlay open={true} variant='sugarlife'>
-      <StartButton onClick={onStartBtnClick} variant='sugarlife' />
+    <SplashOverlay open={true} variant='candy'>
+      <StartButton onClick={onStartBtnClick} variant='candy' />
+      <BackToGalleryLink />
     </SplashOverlay>
   )
 }

@@ -1,3 +1,4 @@
+import BackToGalleryLink from 'components/BackToGalleryLink'
 import { BoothXrScene } from 'components/BoothXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
@@ -17,6 +18,7 @@ const Booth: FunctionalComponent<RoutableProps> = () => {
   return (
     <SplashOverlay open={true} variant='booth'>
       <StartButton onClick={onStartBtnClick} variant='booth' />
+      <BackToGalleryLink light />
     </SplashOverlay>
   )
 }

@@ -300,8 +300,8 @@ export const SugarlifeXrScene = () => {
 
   return (
     <>
-      <SplashOverlay open={!started} variant='sugarlife'>
-        <LoadingIndicator progress={progress} variant='sugarlife' />
+      <SplashOverlay open={!started} variant='candy'>
+        <LoadingIndicator progress={progress} variant='candy' />
       </SplashOverlay>
       <Dialog open={showInstructions}>
         <div class='uppercase text-center py-3 text-lg'>Instructions</div>

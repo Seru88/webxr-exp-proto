@@ -8,11 +8,12 @@ module.exports = {
         indeterminate: 'indeterminate 1s infinite linear'
       },
       colors: {
-        main: 'rgb(61,155,233)',
-        secondary: 'rgb(255, 142, 44)',
-        booth: '#62214b',
-        sugarlife: '#E2677F',
-        ford: '#216d6f'
+        billboard: '#8D79DB',
+        booth: '#7D1587',
+        candy: '#F26EBA',
+        car: '#216D6F',
+        college: '#38BBF5',
+        golf: '#D51900'
       },
       keyframes: {
         indeterminate: {

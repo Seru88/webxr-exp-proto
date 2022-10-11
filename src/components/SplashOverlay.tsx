@@ -1,16 +1,18 @@
 import clsx from 'clsx'
 import { FunctionalComponent } from 'preact'
-import { useEffect, useRef } from 'preact/hooks'
+import { useEffect, useMemo, useRef } from 'preact/hooks'
 import PoweredByPostReality from './PoweredByPostReality'
 
-import booth_bg from 'assets/ui/booth_bg.jpg'
-import sugarlife_bg from 'assets/ui/sugarlife_bg.jpg'
-
-import ford_brand_src from 'assets/ui/ford_icon.jpg'
+import booth_bg_src from 'assets/ui/booth_bg.png'
+import candy_bg_src from 'assets/ui/candy_bg.png'
+import billboard_bg_src from 'assets/ui/billboard_bg.png'
+import car_bg_src from 'assets/ui/car_bg.png'
+import college_bg_src from 'assets/ui/college_bg.png'
+import golf_bg_src from 'assets/ui/golf_bg.png'
 
 type SplashOverlayProps = {
   open: boolean
-  variant: 'booth' | 'sugarlife' | 'ford'
+  variant: 'billboard' | 'booth' | 'candy' | 'car' | 'college' | 'golf'
 }
 
 const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
@@ -19,6 +21,23 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
   children
 }) => {
   const divRef = useRef<HTMLDivElement | null>(null)
+
+  const bgImage = useMemo(() => {
+    switch (variant) {
+      case 'billboard':
+        return billboard_bg_src
+      case 'booth':
+        return booth_bg_src
+      case 'candy':
+        return candy_bg_src
+      case 'car':
+        return car_bg_src
+      case 'college':
+        return college_bg_src
+      case 'golf':
+        return golf_bg_src
+    }
+  }, [variant])
 
   useEffect(() => {
     const div = divRef.current
@@ -52,21 +71,9 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
         duration-300`,
         open ? 'opacity-100' : 'opacity-0'
       )}
-      style={
-        variant !== 'ford'
-          ? {
-              backgroundImage: `url(${
-                variant === 'booth' ? booth_bg : sugarlife_bg
-              })`
-            }
-          : undefined
-      }
+      style={{ backgroundImage: `url(${bgImage})` }}
     >
-      <div class='basis-9/12 flex flex-col justify-center items-center'>
-        {variant === 'ford' && (
-          <img class='w-auto h-auto' src={ford_brand_src} alt='' />
-        )}
-      </div>
+      <div class='basis-9/12 flex flex-col justify-center items-center' />
       <div class='basis-2/12 flex flex-col justify-center items-center'>
         {children}
       </div>

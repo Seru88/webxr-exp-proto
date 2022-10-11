@@ -1,10 +1,8 @@
 import clsx from 'clsx'
 import { FunctionalComponent, JSX } from 'preact'
-import ford_start_btn_src from 'assets/ui/ford_start_btn.png'
-import booth_start_btn_src from 'assets/ui/booth_start_btn.png'
 
 type StartButtonProps = {
-  variant: 'sugarlife' | 'booth' | 'ford'
+  variant: 'billboard' | 'booth' | 'candy' | 'car' | 'college' | 'golf'
 } & JSX.HTMLAttributes<HTMLButtonElement>
 
 const StartButton: FunctionalComponent<StartButtonProps> = ({
@@ -13,22 +11,17 @@ const StartButton: FunctionalComponent<StartButtonProps> = ({
 }) => {
   return (
     <button
-      class={clsx(variant === 'sugarlife' && 'btn btn-sugarlife')}
+      class={clsx(
+        variant === 'billboard' && 'btn btn-billboard',
+        variant === 'booth' && 'btn btn-booth',
+        variant === 'candy' && 'btn btn-candy',
+        variant === 'car' && 'btn btn-car',
+        variant === 'college' && 'btn btn-college',
+        variant === 'golf' && 'btn btn-golf'
+      )}
       {...rest}
     >
-      {variant === 'sugarlife' ? (
-        'Start'
-      ) : (
-        <img
-          class={
-            variant === 'ford'
-              ? 'max-w-[196px]'
-              : 'max-w-[156px] shadow-lg rounded-lg'
-          }
-          src={variant === 'ford' ? ford_start_btn_src : booth_start_btn_src}
-          alt='Start Experience'
-        />
-      )}
+      Start
     </button>
   )
 }

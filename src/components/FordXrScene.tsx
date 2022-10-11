@@ -548,9 +548,14 @@ const FordXrScene: FunctionalComponent = () => {
           // mesh.name !== 'drag-ground' && mesh.name !== 'BackgroundSkybox'
         )
         if (result?.hit) {
-          console.log(result.pickedMesh)
           if (!animGroup.isPlaying) {
-            animGroup.play()
+            animGroup.play(false)
+          } else {
+            const ratio = -animGroup.speedRatio
+            const from = animGroup.animatables[0].masterFrame
+            const to = Math.sign(ratio) === -1 ? animGroup.from : animGroup.to
+            animGroup.stop()
+            animGroup.start(false, ratio, from, to)
           }
         }
       }
@@ -619,8 +624,8 @@ const FordXrScene: FunctionalComponent = () => {
 
   return (
     <div class='fixed w-screen h-full'>
-      <SplashOverlay open={isLoading} variant='ford'>
-        <LoadingIndicator variant='ford' progress={progress} />
+      <SplashOverlay open={isLoading} variant='car'>
+        <LoadingIndicator variant='car' progress={progress} />
       </SplashOverlay>
       <button
         id='preview-info-btn'

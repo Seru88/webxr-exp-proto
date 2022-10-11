@@ -4,13 +4,25 @@
 
 @layer components {
   .btn {
-    @apply uppercase text-2xl font-bold border-2 transition-colors shadow-lg
+    @apply py-0 px-6 rounded-md text-white uppercase text-2xl font-bold border-2 transition-colors shadow-lg border-white hover:bg-white
+  }
+  .btn-billboard {
+    @apply bg-billboard hover:text-billboard
   }
   .btn-booth {
-    @apply py-0 px-6 rounded-md text-white bg-booth border-white hover:text-booth hover:bg-white
+    @apply bg-booth hover:text-booth 
   }
-  .btn-sugarlife {
-    @apply py-2.5 px-5 rounded-xl text-sugarlife bg-white border-sugarlife hover:text-white hover:bg-sugarlife
+  .btn-candy {
+    @apply bg-candy hover:text-candy
+  }
+  .btn-car {
+    @apply bg-car hover:text-car
+  }
+  .btn-college {
+    @apply bg-college hover:text-college
+  }
+  .btn-golf {
+    @apply bg-golf hover:bg-golf
   }
 }
 

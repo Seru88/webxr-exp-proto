@@ -1,3 +1,4 @@
+import BackToGalleryLink from 'components/BackToGalleryLink'
 import FordXrScene from 'components/FordXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
@@ -15,8 +16,9 @@ const Ford: FunctionalComponent<RoutableProps> = () => {
   if (start) return <FordXrScene />
 
   return (
-    <SplashOverlay open={true} variant='ford'>
-      <StartButton onClick={onStartBtnClick} variant='ford' />
+    <SplashOverlay open={true} variant='car'>
+      <StartButton onClick={onStartBtnClick} variant='car' />
+      <BackToGalleryLink />
     </SplashOverlay>
   )
 }
