@@ -2,9 +2,7 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import SplashOverlay from 'components/SplashOverlay'
 import AsyncRoute from 'preact-async-route'
 import Router from 'preact-router'
-import Billboard from 'routes/Billboard'
 import College from 'routes/College'
-import Golf from 'routes/Golf'
 import Home from 'routes/Home'
 
 export function App() {
@@ -12,9 +10,18 @@ export function App() {
     <div class='w-screen h-screen'>
       <Router>
         <Home path='/' />
-        <Golf path='/golf' />
         <College path='/college' />
-        <Billboard path='/billboard' />
+        <AsyncRoute
+          path='/billboard'
+          getComponent={() =>
+            import('routes/Billboard').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='billboard'>
+              <LoadingIndicator variant='billboard' showText={false} />
+            </SplashOverlay>
+          )}
+        />
         <AsyncRoute
           path='/booth'
           getComponent={() =>
@@ -23,6 +30,17 @@ export function App() {
           loading={() => (
             <SplashOverlay open variant='booth'>
               <LoadingIndicator variant='booth' showText={false} />
+            </SplashOverlay>
+          )}
+        />
+        <AsyncRoute
+          path='/candy'
+          getComponent={() =>
+            import('routes/Sugarlife').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='candy'>
+              <LoadingIndicator variant='candy' showText={false} />
             </SplashOverlay>
           )}
         />
@@ -38,13 +56,13 @@ export function App() {
           )}
         />
         <AsyncRoute
-          path='/candy'
+          path='/golf'
           getComponent={() =>
-            import('routes/Sugarlife').then(module => module.default)
+            import('routes/Golf').then(module => module.default)
           }
           loading={() => (
-            <SplashOverlay open variant='candy'>
-              <LoadingIndicator variant='candy' showText={false} />
+            <SplashOverlay open variant='golf'>
+              <LoadingIndicator variant='golf' showText={false} />
             </SplashOverlay>
           )}
         />

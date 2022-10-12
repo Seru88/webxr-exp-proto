@@ -32,7 +32,7 @@ import surface_icon_src from 'assets/ui/surface_icon.png'
 import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
 import pr_video_src from 'assets/videos/post_reality.mp4'
 import starry_sky_video_src from 'assets/videos/starry_sky.mp4'
-import meshGestureBehavior from 'meshGestureBehavior'
+import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
 import Dialog from './Dialog'
@@ -207,7 +207,7 @@ export const BoothXrScene = () => {
       { loop: true, autoPlay: false, muted: true }
     )
 
-    rootNode = new TransformNode('stage', scene)
+    rootNode = new TransformNode('root-node', scene)
     const canvas = engine.getRenderingCanvas()
     if (canvas) {
       meshGestureBehavior(canvas, rootNode)
@@ -231,13 +231,10 @@ export const BoothXrScene = () => {
         model.parent = rootNode
         for (const mesh of meshes) {
           if (
-            mesh.name === 'button_facebook' ||
             mesh.name === 'button_facebook_primitive0' ||
             mesh.name === 'button_facebook_primitive1' ||
-            mesh.name === 'button_linkedin' ||
             mesh.name === 'button_linkedin_primitive0' ||
             mesh.name === 'button_linkedin_primitive1' ||
-            mesh.name === 'button_twitter' ||
             mesh.name === 'button_twitter_primitive0' ||
             mesh.name === 'button_twitter_primitive1'
           ) {
@@ -383,6 +380,40 @@ export const BoothXrScene = () => {
 
       canvas.addEventListener('touchstart', placeObjectTouchHandler, true) // Add touch listener.
 
+      scene.onPointerDown = () => {
+        const result = scene.pick(
+          scene.pointerX,
+          scene.pointerY,
+          mesh =>
+            mesh.name === 'button_facebook_primitive0' ||
+            mesh.name === 'button_facebook_primitive1' ||
+            mesh.name === 'button_linkedin_primitive0' ||
+            mesh.name === 'button_linkedin_primitive1' ||
+            mesh.name === 'button_twitter_primitive0' ||
+            mesh.name === 'button_twitter_primitive1'
+        )
+        if (result?.pickedMesh) {
+          const mesh = result.pickedMesh
+          switch (mesh.name) {
+            case 'button_facebook_primitive0':
+            case 'button_facebook_primitive1':
+              window.open('https://pt-br.facebook.com/postrealityAR/', '_blank')
+              break
+            case 'button_linkedin_primitive0':
+            case 'button_linkedin_primitive1':
+              window.open(
+                'https://www.linkedin.com/company/post-reality',
+                '_blank'
+              )
+              break
+            case 'button_twitter_primitive0':
+            case 'button_twitter_primitive1':
+              window.open('https://mobile.twitter.com/postrealityar', '_blank')
+              break
+          }
+        }
+      }
+
       scene.registerBeforeRender(() => {
         if (rootNode && rootNode.isEnabled() === false && placeCursor) {
           const ray = freeCam.getForwardRay(999)
@@ -422,8 +453,8 @@ export const BoothXrScene = () => {
       window.XR8.XrController.pipelineModule(), // Enables SLAM
       // window.XRExtras.AlmostThere.pipelineModule(), // Detects unsupported browsers and gives hints.
       window.XRExtras.Loading.pipelineModule(), // Manages the loading screen on startup.
-      window.XRExtras.FullWindowCanvas.pipelineModule(),
       window.LandingPage.pipelineModule(), // Detects unsupported browsers and gives hints.
+      // window.XRExtras.FullWindowCanvas.pipelineModule(),
       window.XRExtras.RuntimeError.pipelineModule(), // Shows an error image on runtime error.
       {
         name: 'camerastartupmodule',
@@ -511,7 +542,7 @@ export const BoothXrScene = () => {
       <canvas
         id='renderCanvas'
         ref={canvasRef}
-        class='overflow-hidden outline-none'
+        class='overflow-hidden outline-none h-screen w-screen'
       />
     </>
   )

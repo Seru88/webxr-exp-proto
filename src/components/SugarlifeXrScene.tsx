@@ -26,7 +26,7 @@ import modelPath from 'assets/models/sugarlife_model.glb'
 import pinch_icon_src from 'assets/ui/pinch_icon.png'
 import surface_icon_src from 'assets/ui/surface_icon.png'
 import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
-import meshGestureBehavior from 'meshGestureBehavior'
+import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useState } from 'preact/hooks'
 
 import Dialog from './Dialog'
@@ -116,7 +116,7 @@ export const SugarlifeXrScene = () => {
       { loop: true }
     )
 
-    rootNode = new TransformNode('stage', scene)
+    rootNode = new TransformNode('root-node', scene)
     const canvas = engine.getRenderingCanvas()
     if (canvas) {
       meshGestureBehavior(canvas, rootNode)
@@ -335,18 +335,18 @@ export const SugarlifeXrScene = () => {
         </button>
       </Dialog>
       <button
-        class='btn btn-sugarlife absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
+        class='btn btn-candy absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
         onClick={() => setShowInstructions(true)}
       >
         i
       </button>
       {storeBtnActive && (
-        <div class='w-full absolute bottom-14 flex justify-center items-center'>
+        <div class='w-full absolute bottom-24 flex justify-center items-center'>
           <a
             role='button'
             href='https://www.sugarlifecandy.com/'
             target='_blank'
-            class='btn btn-sugarlife'
+            class='btn btn-candy'
           >
             Enter Store
           </a>

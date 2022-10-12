@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply py-0 px-6 rounded-md text-white uppercase text-2xl font-bold border-2 transition-colors shadow-lg border-white hover:bg-white
+  }
+  .btn-billboard {
+    @apply bg-billboard hover:text-billboard
+  }
+  .btn-booth {
+    @apply bg-booth hover:text-booth 
+  }
+  .btn-candy {
+    @apply bg-candy hover:text-candy
+  }
+  .btn-car {
+    @apply bg-car hover:text-car
+  }
+  .btn-college {
+    @apply bg-college hover:text-college
+  }
+  .btn-golf {
+    @apply bg-golf hover:bg-golf
+  }
+}
+
+#requestingCameraPermissions {
+  background-color: #e2677f;
+}
+
+#loadBackground {
+  /* background-image: url('/img/background.jpg'); */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: none;
+}
+
+.spin {
+  display: none;
+}
+
+ .poweredby-img {
+  display: none;
+} 
+
+.prompt-box-8w {
+  background-color: #e2677f;
+}

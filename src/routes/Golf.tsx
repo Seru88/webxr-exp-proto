@@ -1,24 +1,23 @@
 import BackToGalleryLink from 'components/BackToGalleryLink'
-// import { BoothXrScene } from 'components/BoothXrScene'
+import { GolfXrScene } from 'components/GolfXrScene'
 import SplashOverlay from 'components/SplashOverlay'
-// import StartButton from 'components/StartButton'
+import StartButton from 'components/StartButton'
 import { FunctionalComponent } from 'preact'
 import { RoutableProps } from 'preact-router'
-// import { useState } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 
 const Golf: FunctionalComponent<RoutableProps> = () => {
-  // const [start, setStart] = useState(false)
+  const [start, setStart] = useState(false)
 
-  // const onStartBtnClick = () => {
-  //   setStart(true)
-  // }
+  const onStartBtnClick = () => {
+    setStart(true)
+  }
 
-  // if (start) return <BoothXrScene />
+  if (start) return <GolfXrScene />
 
   return (
     <SplashOverlay open={true} variant='golf'>
-      {/* <StartButton onClick={onStartBtnClick} variant='booth' /> */}
-      <h1 class='text-3xl font-bold'>Coming Soon</h1>
+      <StartButton onClick={onStartBtnClick} variant='golf' />
       <BackToGalleryLink />
     </SplashOverlay>
   )
