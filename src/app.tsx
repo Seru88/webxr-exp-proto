@@ -2,7 +2,6 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import SplashOverlay from 'components/SplashOverlay'
 import AsyncRoute from 'preact-async-route'
 import Router from 'preact-router'
-import College from 'routes/College'
 import Home from 'routes/Home'
 
 export function App() {
@@ -10,7 +9,6 @@ export function App() {
     <div class='w-screen h-screen'>
       <Router>
         <Home path='/' />
-        <College path='/college' />
         <AsyncRoute
           path='/billboard'
           getComponent={() =>
@@ -52,6 +50,17 @@ export function App() {
           loading={() => (
             <SplashOverlay open variant='car'>
               <LoadingIndicator variant='car' showText={false} />
+            </SplashOverlay>
+          )}
+        />
+        <AsyncRoute
+          path='/college'
+          getComponent={() =>
+            import('routes/College').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='college'>
+              <LoadingIndicator variant='college' showText={false} />
             </SplashOverlay>
           )}
         />

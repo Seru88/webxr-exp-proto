@@ -130,19 +130,19 @@ export const SugarlifeXrScene = () => {
       meshes => {
         const root = meshes[0] as Mesh
         const banner = meshes[1] as Mesh
+        for (const mesh of meshes) {
+          if (mesh.material instanceof PBRMaterial) {
+            mesh.material.emissiveColor = Color3.White()
+          }
+        }
         ;(banner.material as PBRMaterial).albedoTexture = bannerVidTex
         ;(banner.material as PBRMaterial).emissiveTexture = bannerVidTex
         ;(banner.material as PBRMaterial).emissiveColor = Color3.White()
         ;(banner.material as PBRMaterial).disableLighting = true
-        model = BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(root)
+        model = root
         model.rotation = new Vector3(0, 0, 0)
         model.parent = rootNode
-        // for (const mesh of meshes) {
-        //   if (mesh.material instanceof PBRMaterial) {
-        //     mesh.material.emissiveColor = Color3.White()
-        //   }
-        // }
-        // model = root
+
         setStarted(true)
       },
       xhr => {

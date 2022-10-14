@@ -1,24 +1,24 @@
 import BackToGalleryLink from 'components/BackToGalleryLink'
-// import { BoothXrScene } from 'components/BoothXrScene'
+import { CollegeXrScene } from 'components/CollegeXrScene'
 import SplashOverlay from 'components/SplashOverlay'
-// import StartButton from 'components/StartButton'
+import StartButton from 'components/StartButton'
 import { FunctionalComponent } from 'preact'
 import { RoutableProps } from 'preact-router'
-// import { useState } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 
 const College: FunctionalComponent<RoutableProps> = () => {
-  // const [start, setStart] = useState(false)
+  const [start, setStart] = useState(false)
 
-  // const onStartBtnClick = () => {
-  //   setStart(true)
-  // }
+  const onStartBtnClick = () => {
+    setStart(true)
+  }
 
-  // if (start) return <BoothXrScene />
+  if (start) return <CollegeXrScene />
 
   return (
     <SplashOverlay open={true} variant='college'>
-      {/* <StartButton onClick={onStartBtnClick} variant='booth' /> */}
-      <h1 class='text-3xl font-bold'>Coming Soon</h1>
+      <StartButton onClick={onStartBtnClick} variant='college' />
+      {/* <h1 class='text-3xl font-bold'>Coming Soon</h1> */}
       <BackToGalleryLink />
     </SplashOverlay>
   )
