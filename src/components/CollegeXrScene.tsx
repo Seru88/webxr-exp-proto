@@ -137,7 +137,7 @@ export const CollegeXrScene = () => {
 
   const totalProgress = useMemo(() => {
     const [base, blue, green, orange, pink] = progress
-    return (base + blue + green + orange + pink) / 5
+    return (base + blue + green + orange + pink) / progress.length
   }, [progress])
 
   // Populates some object into an XR scene and sets the initial camera position.

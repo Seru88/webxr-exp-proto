@@ -3,16 +3,24 @@ import { FunctionalComponent } from 'preact'
 import { useEffect, useMemo, useRef } from 'preact/hooks'
 import PoweredByPostReality from './PoweredByPostReality'
 
-import booth_bg_src from 'assets/ui/booth_bg.png'
-import candy_bg_src from 'assets/ui/candy_bg.png'
-import billboard_bg_src from 'assets/ui/billboard_bg.png'
-import car_bg_src from 'assets/ui/car_bg.png'
-import college_bg_src from 'assets/ui/college_bg.png'
-import golf_bg_src from 'assets/ui/golf_bg.png'
+import booth_bg_src from 'assets/ui/booth_bg.jpg'
+import candy_bg_src from 'assets/ui/candy_bg.jpg'
+import billboard_bg_src from 'assets/ui/billboard_bg.jpg'
+import brochure_bg_src from 'assets/ui/brochure_bg.jpg'
+import car_bg_src from 'assets/ui/car_bg.jpg'
+import college_bg_src from 'assets/ui/college_bg.jpg'
+import golf_bg_src from 'assets/ui/golf_bg.jpg'
 
 type SplashOverlayProps = {
   open: boolean
-  variant: 'billboard' | 'booth' | 'candy' | 'car' | 'college' | 'golf'
+  variant:
+    | 'billboard'
+    | 'booth'
+    | 'brochure'
+    | 'candy'
+    | 'car'
+    | 'college'
+    | 'golf'
 }
 
 const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
@@ -28,6 +36,8 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
         return billboard_bg_src
       case 'booth':
         return booth_bg_src
+      case 'brochure':
+        return brochure_bg_src
       case 'candy':
         return candy_bg_src
       case 'car':

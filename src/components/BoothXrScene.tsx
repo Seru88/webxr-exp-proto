@@ -22,7 +22,7 @@ import {
   Vector3,
   VideoTexture
 } from '@babylonjs/core'
-import info_btn_src from 'assets/ui/booth_info_btn.png'
+// import info_btn_src from 'assets/ui/booth_info_btn.png'
 import model_src from 'assets/models/booth_model.glb'
 import bgm_src from 'assets/audio/booth_bgm.mp3'
 import cursor_src from 'assets/textures/booth_cursor.png'
@@ -119,8 +119,8 @@ const startScale = Vector3.Zero() // Initial scale value for our model
 const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
 const xrControllerConfig = {
-  enableLighting: true
-  // disableWorldTracking: true
+  enableLighting: true,
+  disableWorldTracking: true
 }
 
 export const BoothXrScene = () => {
@@ -530,11 +530,17 @@ export const BoothXrScene = () => {
           Close
         </button>
       </Dialog>
-      <button
+      {/* <button
         class='absolute top-2 right-2 border-white border-[1px] rounded-lg'
         onClick={() => setShowInstructions(true)}
       >
         <img class='w-10 h-10' src={info_btn_src} alt='Instructions' />
+      </button> */}
+      <button
+        class='btn btn-booth absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
+        onClick={() => setShowInstructions(true)}
+      >
+        i
       </button>
       <div class='absolute bottom-2 left-2 pointer-events-none'>
         <PoweredByPostReality />

@@ -5,7 +5,14 @@ import ProgressBar from 'components/ProgressBar'
 type LoadingIndicatorProps = {
   progress?: number
   showText?: boolean
-  variant: 'billboard' | 'booth' | 'candy' | 'car' | 'college' | 'golf'
+  variant:
+    | 'billboard'
+    | 'booth'
+    | 'brochure'
+    | 'candy'
+    | 'car'
+    | 'college'
+    | 'golf'
 }
 
 const LoadingIndicator: FunctionalComponent<LoadingIndicatorProps> = ({
@@ -23,6 +30,7 @@ const LoadingIndicator: FunctionalComponent<LoadingIndicatorProps> = ({
           'items-center',
           variant === 'billboard' && 'text-billboard',
           variant === 'booth' && 'text-booth',
+          variant === 'brochure' && 'text-brochure',
           variant === 'candy' && 'text-candy',
           variant === 'car' && 'text-car',
           variant === 'college' && 'text-college',

@@ -2,7 +2,14 @@ import clsx from 'clsx'
 import { FC } from 'preact/compat'
 
 interface ProgressBarProps {
-  variant: 'billboard' | 'booth' | 'candy' | 'car' | 'college' | 'golf'
+  variant:
+    | 'billboard'
+    | 'booth'
+    | 'brochure'
+    | 'candy'
+    | 'car'
+    | 'college'
+    | 'golf'
   value?: number
 }
 
@@ -14,6 +21,7 @@ const ProgressBar: FC<ProgressBarProps> = ({ variant, value }) => {
         'w-28 h-4 mt-2 mx-auto p-[3px] rounded-lg scale-125',
         variant === 'billboard' && 'bg-billboard',
         variant === 'booth' && 'bg-booth',
+        variant === 'brochure' && 'bg-brochure',
         variant === 'candy' && 'bg-candy',
         variant === 'car' && 'bg-car',
         variant === 'college' && 'bg-college',

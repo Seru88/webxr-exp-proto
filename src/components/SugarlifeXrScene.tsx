@@ -1,7 +1,6 @@
 import '@babylonjs/loaders/glTF'
 
 import {
-  BoundingBoxGizmo,
   Color3,
   DirectionalLight,
   Engine,
@@ -19,13 +18,13 @@ import {
   Vector3,
   VideoTexture
 } from '@babylonjs/core'
-import cursorPath from 'assets/textures/sugarlife_cursor.png'
 import bgmPath from 'assets/audio/sugarlife_bgm.mp3'
-import videoPath from 'assets/videos/sugarlife_banner.mp4'
 import modelPath from 'assets/models/sugarlife_model.glb'
+import cursorPath from 'assets/textures/sugarlife_cursor.png'
 import pinch_icon_src from 'assets/ui/pinch_icon.png'
 import surface_icon_src from 'assets/ui/surface_icon.png'
 import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
+import videoPath from 'assets/videos/sugarlife_banner.mp4'
 import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useState } from 'preact/hooks'
 
@@ -47,8 +46,8 @@ const startScale = Vector3.Zero() // Initial scale value for our model
 const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
 const xrControllerConfig = {
-  enableLighting: true
-  // disableWorldTracking: true
+  enableLighting: true,
+  disableWorldTracking: true
 }
 
 export const SugarlifeXrScene = () => {

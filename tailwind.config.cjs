@@ -10,6 +10,7 @@ module.exports = {
       colors: {
         billboard: '#8D79DB',
         booth: '#7D1587',
+        brochure: '#FFBE2E',
         candy: '#F26EBA',
         car: '#216D6F',
         college: '#38BBF5',

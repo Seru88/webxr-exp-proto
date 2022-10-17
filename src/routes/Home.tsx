@@ -1,11 +1,11 @@
 import android_icon_src from 'assets/ui/android_icon.svg'
-import billboard_thumb_src from 'assets/ui/billboard_thumb.png'
-import booth_thumb_src from 'assets/ui/booth_thumb.png'
-import candy_thumb_src from 'assets/ui/candy_thumb.png'
-import car_thumb_src from 'assets/ui/car_thumb.png'
+import billboard_thumb_src from 'assets/ui/billboard_thumb.jpg'
+import booth_thumb_src from 'assets/ui/booth_thumb.jpg'
+import candy_thumb_src from 'assets/ui/candy_thumb.jpg'
+import car_thumb_src from 'assets/ui/car_thumb.jpg'
 import chrome_icon_src from 'assets/ui/chrome_icon.svg'
-import college_thumb_src from 'assets/ui/college_thumb.png'
-import golf_thumb_src from 'assets/ui/golf_thumb.png'
+import college_thumb_src from 'assets/ui/college_thumb.jpg'
+import golf_thumb_src from 'assets/ui/golf_thumb.jpg'
 import PoweredByPostReality from 'components/PoweredByPostReality'
 import { FunctionalComponent, JSX } from 'preact'
 import { RoutableProps } from 'preact-router'
@@ -74,6 +74,18 @@ const links = [
         <a class='text-blue-500 visited:text-purple-500 font-semibold'>here.</a>
       </span>
     )
+  },
+  {
+    href: '/brochure',
+    thumbSrc: billboard_thumb_src,
+    title: 'Brochure',
+    subtitle: 'Description goes here.',
+    disclaimer: (
+      <span>
+        Image marker available{' '}
+        <a class='text-blue-500 visited:text-purple-500 font-semibold'>here.</a>
+      </span>
+    )
   }
 ]
 
@@ -95,7 +107,7 @@ const ExperienceRouteLinkCard: FunctionalComponent<
       href={href}
     >
       <div
-        class='basis-28 bg-center bg-no-repeat bg-cover w-28 h-24'
+        class='basis-28 bg-center bg-no-repeat bg-cover w-28 h-24 rounded-l-md'
         style={{ backgroundImage: `url(${thumbSrc})` }}
       />
       <div class='basis-2/3 pl-4 pr-2'>

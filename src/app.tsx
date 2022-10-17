@@ -32,6 +32,17 @@ export function App() {
           )}
         />
         <AsyncRoute
+          path='/brochure'
+          getComponent={() =>
+            import('routes/Brochure').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='brochure'>
+              <LoadingIndicator variant='brochure' showText={false} />
+            </SplashOverlay>
+          )}
+        />
+        <AsyncRoute
           path='/candy'
           getComponent={() =>
             import('routes/Sugarlife').then(module => module.default)

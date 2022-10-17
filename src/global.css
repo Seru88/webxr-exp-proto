@@ -12,6 +12,9 @@
   .btn-booth {
     @apply bg-booth hover:text-booth 
   }
+  .btn-brochure {
+    @apply bg-brochure hover:text-brochure 
+  }
   .btn-candy {
     @apply bg-candy hover:text-candy
   }

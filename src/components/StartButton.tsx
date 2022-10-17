@@ -2,7 +2,14 @@ import clsx from 'clsx'
 import { FunctionalComponent, JSX } from 'preact'
 
 type StartButtonProps = {
-  variant: 'billboard' | 'booth' | 'candy' | 'car' | 'college' | 'golf'
+  variant:
+    | 'billboard'
+    | 'booth'
+    | 'brochure'
+    | 'candy'
+    | 'car'
+    | 'college'
+    | 'golf'
 } & JSX.HTMLAttributes<HTMLButtonElement>
 
 const StartButton: FunctionalComponent<StartButtonProps> = ({
@@ -14,6 +21,7 @@ const StartButton: FunctionalComponent<StartButtonProps> = ({
       class={clsx(
         variant === 'billboard' && 'btn btn-billboard',
         variant === 'booth' && 'btn btn-booth',
+        variant === 'brochure' && 'btn btn-brochure',
         variant === 'candy' && 'btn btn-candy',
         variant === 'car' && 'btn btn-car',
         variant === 'college' && 'btn btn-college',
