@@ -6,6 +6,7 @@ import car_thumb_src from 'assets/ui/car_thumb.jpg'
 import chrome_icon_src from 'assets/ui/chrome_icon.svg'
 import college_thumb_src from 'assets/ui/college_thumb.jpg'
 import golf_thumb_src from 'assets/ui/golf_thumb.jpg'
+import brochure_thumb_src from 'assets/ui/brochure_thumb.jpg'
 import PoweredByPostReality from 'components/PoweredByPostReality'
 import { FunctionalComponent, JSX } from 'preact'
 import { RoutableProps } from 'preact-router'
@@ -64,10 +65,10 @@ const links = [
     )
   },
   {
-    href: '/billboard',
-    thumbSrc: billboard_thumb_src,
-    title: 'Billboard NFT',
-    subtitle: 'Any sign becomes a direct channel to your client.',
+    href: '/brochure',
+    thumbSrc: brochure_thumb_src,
+    title: 'Interactive Brochure',
+    subtitle: 'Turn your printed material into interactive experiences.',
     disclaimer: (
       <span>
         Image marker available{' '}
@@ -76,10 +77,10 @@ const links = [
     )
   },
   {
-    href: '/brochure',
+    href: '/billboard',
     thumbSrc: billboard_thumb_src,
-    title: 'Brochure',
-    subtitle: 'Description goes here.',
+    title: 'Billboard NFT',
+    subtitle: 'Any sign becomes a direct channel to your client.',
     disclaimer: (
       <span>
         Image marker available{' '}
@@ -107,7 +108,7 @@ const ExperienceRouteLinkCard: FunctionalComponent<
       href={href}
     >
       <div
-        class='basis-28 bg-center bg-no-repeat bg-cover w-28 h-24 rounded-l-md'
+        class='basis-28 bg-center bg-no-repeat bg-cover w-28 h-24 rounded-md'
         style={{ backgroundImage: `url(${thumbSrc})` }}
       />
       <div class='basis-2/3 pl-4 pr-2'>

@@ -8,9 +8,9 @@ module.exports = {
         indeterminate: 'indeterminate 1s infinite linear'
       },
       colors: {
-        billboard: '#8D79DB',
+        billboard: '#5A56C4',
         booth: '#7D1587',
-        brochure: '#FFBE2E',
+        brochure: '#7CA7DB',
         candy: '#F26EBA',
         car: '#216D6F',
         college: '#38BBF5',

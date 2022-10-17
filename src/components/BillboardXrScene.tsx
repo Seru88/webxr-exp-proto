@@ -15,9 +15,8 @@ import {
 } from '@babylonjs/core'
 import bgm_src from 'assets/audio/billboard_bgm.mp3'
 import model_src from 'assets/models/billboard_model.glb'
-import pinch_icon_src from 'assets/ui/pinch_icon.png'
-import surface_icon_src from 'assets/ui/surface_icon.png'
-import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
+import point_at_src from 'assets/ui/billboard_point_at.png'
+import btn_illustration_src from 'assets/ui/billboard_btn_illustration.jpg'
 import syncNodeWithImageTargetInfo from 'helpers/syncNodeWithImageTarget'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
@@ -36,7 +35,7 @@ let animGroup: AnimationGroup
 const scaleAdjust = 6
 const xrControllerConfig = {
   enableLighting: true,
-  imageTargets: ['logi']
+  imageTargets: ['billboard']
   // disableWorldTracking: true
 }
 
@@ -243,25 +242,11 @@ export const BillboardXrScene = () => {
       <Dialog open={showInstructions}>
         <div class='uppercase text-center py-3 text-lg'>Instructions</div>
         <hr />
-        <div class='p-4 text-sm shadow-inner'>
-          <div class='w-full flex items-center mt-1 mb-4'>
-            <img class='w-11' src={surface_icon_src} alt='' />
-            <div class='flex-grow ml-6 mr-6'>
-              Point at a horizontal surface to detect it.
-            </div>
-          </div>
-          <div class='w-full flex items-center my-2'>
-            <img class='w-11' src={tap_place_icon_src} alt='' />
-            <div class='flex-grow ml-6 mr-6'>
-              Tap screen to place model on the placement indicator.
-            </div>
-          </div>
-          <div class='w-full flex items-center mb-1 mt-4'>
-            <img class='w-11' src={pinch_icon_src} alt='' />
-            <div class='flex-grow ml-6 mr-6'>
-              You can pinch to scale, rotate and drag to move the model.
-            </div>
-          </div>
+        <div class='p-4 shadow-inner flex flex-col items-center space-y-4'>
+          <img class='w-32' src={point_at_src} alt='' />
+          <p class='text-center'>
+            Point your device at the poster to reveal the NFT content.
+          </p>
         </div>
         <hr />
         <button
@@ -283,9 +268,13 @@ export const BillboardXrScene = () => {
             role='button'
             href='https://docs.opensea.io/'
             target='_blank'
-            class='btn btn-billboard'
+            class='btn btn-billboard flex items-center space-x-8 pr-1'
           >
-            Bid Now
+            <div class='flex flex-col items-center justify-center'>
+              <div>View NFT</div>
+              <div>Gallery</div>
+            </div>
+            <img class='h-20' src={btn_illustration_src} alt='' />
           </a>
         </div>
       )}

@@ -18,9 +18,7 @@ import {
 } from '@babylonjs/core'
 import bgm_src from 'assets/audio/golf_bgm.mp3'
 import model_src from 'assets/models/golf_model.glb'
-import pinch_icon_src from 'assets/ui/pinch_icon.png'
-import surface_icon_src from 'assets/ui/surface_icon.png'
-import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
+import point_at_src from 'assets/ui/golf_point_at.png'
 import golf_video_src from 'assets/videos/golf.mp4'
 import syncNodeWithImageTargetInfo from 'helpers/syncNodeWithImageTarget'
 import { useEffect, useRef, useState } from 'preact/hooks'
@@ -257,25 +255,11 @@ export const GolfXrScene = () => {
       <Dialog open={showInstructions}>
         <div class='uppercase text-center py-3 text-lg'>Instructions</div>
         <hr />
-        <div class='p-4 text-sm shadow-inner'>
-          <div class='w-full flex items-center mt-1 mb-4'>
-            <img class='w-11' src={surface_icon_src} alt='' />
-            <div class='flex-grow ml-6 mr-6'>
-              Point at a horizontal surface to detect it.
-            </div>
-          </div>
-          <div class='w-full flex items-center my-2'>
-            <img class='w-11' src={tap_place_icon_src} alt='' />
-            <div class='flex-grow ml-6 mr-6'>
-              Tap screen to place model on the placement indicator.
-            </div>
-          </div>
-          <div class='w-full flex items-center mb-1 mt-4'>
-            <img class='w-11' src={pinch_icon_src} alt='' />
-            <div class='flex-grow ml-6 mr-6'>
-              You can pinch to scale, rotate and drag to move the model.
-            </div>
-          </div>
+        <div class='p-4 shadow-inner flex flex-col items-center space-y-4'>
+          <img class='w-32' src={point_at_src} alt='' />
+          <p class='text-center'>
+            Point your device at the event poster to reveal the AR content.
+          </p>
         </div>
         <hr />
         <button
