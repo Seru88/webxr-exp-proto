@@ -64,7 +64,7 @@ export function App() {
             </SplashOverlay>
           )}
         />
-        <AsyncRoute
+        {/* <AsyncRoute
           path='/college'
           getComponent={() =>
             import('routes/College').then(module => module.default)
@@ -74,7 +74,7 @@ export function App() {
               <LoadingIndicator variant='college' showText={false} />
             </SplashOverlay>
           )}
-        />
+        /> */}
         <AsyncRoute
           path='/golf'
           getComponent={() =>

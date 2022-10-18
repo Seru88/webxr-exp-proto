@@ -38,8 +38,8 @@ let bgm: Sound
 const scaleAdjust = 0.19
 const xrControllerConfig = {
   enableLighting: true,
-  imageTargets: ['brochure_1', 'brochure_2'],
-  disableWorldTracking: true
+  imageTargets: ['brochure_1', 'brochure_2']
+  // disableWorldTracking: true
 }
 
 export const BrochureXrScene = () => {
@@ -298,18 +298,6 @@ export const BrochureXrScene = () => {
       >
         i
       </button>
-      {targetFound && (
-        <div class='w-full absolute bottom-24 flex justify-center items-center'>
-          <a
-            role='button'
-            href='https://docs.opensea.io/'
-            target='_blank'
-            class='btn btn-billboard'
-          >
-            Bid Now
-          </a>
-        </div>
-      )}
       <div class='absolute bottom-2 left-2 pointer-events-none'>
         <PoweredByPostReality />
       </div>

@@ -52,18 +52,18 @@ const links = [
       </span>
     )
   },
-  {
-    href: '/college',
-    thumbSrc: college_thumb_src,
-    title: 'College Courses',
-    subtitle: 'Hear directly from alumni and choose the best path for you.',
-    disclaimer: (
-      <span>
-        Image marker available{' '}
-        <a class='text-blue-500 visited:text-purple-500 font-semibold'>here.</a>
-      </span>
-    )
-  },
+  // {
+  //   href: '/college',
+  //   thumbSrc: college_thumb_src,
+  //   title: 'College Courses',
+  //   subtitle: 'Hear directly from alumni and choose the best path for you.',
+  //   disclaimer: (
+  //     <span>
+  //       Image marker available{' '}
+  //       <a class='text-blue-500 visited:text-purple-500 font-semibold'>here.</a>
+  //     </span>
+  //   )
+  // },
   {
     href: '/brochure',
     thumbSrc: brochure_thumb_src,
