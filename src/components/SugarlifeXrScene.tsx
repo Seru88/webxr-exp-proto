@@ -27,6 +27,7 @@ import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
 import videoPath from 'assets/videos/sugarlife_banner.mp4'
 import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useState } from 'preact/hooks'
+import { isMobile } from 'react-device-detect'
 
 import Dialog from './Dialog'
 import LoadingIndicator from './LoadingIndicator'
@@ -47,7 +48,7 @@ const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
 const xrControllerConfig = {
   enableLighting: true,
-  disableWorldTracking: true
+  disableWorldTracking: !isMobile
 }
 
 export const SugarlifeXrScene = () => {

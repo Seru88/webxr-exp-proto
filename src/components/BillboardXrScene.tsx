@@ -24,6 +24,7 @@ import Dialog from './Dialog'
 import LoadingIndicator from './LoadingIndicator'
 import PoweredByPostReality from './PoweredByPostReality'
 import SplashOverlay from './SplashOverlay'
+import { isMobile } from 'react-device-detect'
 
 let engine: Engine
 let scene: Scene
@@ -35,8 +36,8 @@ let animGroup: AnimationGroup
 const scaleAdjust = 6
 const xrControllerConfig = {
   enableLighting: true,
-  imageTargets: ['billboard']
-  // disableWorldTracking: true
+  imageTargets: ['billboard'],
+  disableWorldTracking: !isMobile
 }
 
 export const BillboardXrScene = () => {

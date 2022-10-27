@@ -16,7 +16,8 @@
     "clsx": "^1.2.1",
     "preact": "^10.10.6",
     "preact-async-route": "^2.2.1",
-    "preact-router": "^4.1.0"
+    "preact-router": "^4.1.0",
+    "react-device-detect": "^2.2.2"
   },
   "devDependencies": {
     "@babel/core": ">=7.12.10 <8.0.0",

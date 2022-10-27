@@ -27,6 +27,7 @@ import Dialog from './Dialog'
 import LoadingIndicator from './LoadingIndicator'
 import PoweredByPostReality from './PoweredByPostReality'
 import SplashOverlay from './SplashOverlay'
+import { isMobile } from 'react-device-detect'
 
 let engine: Engine
 let scene: Scene
@@ -38,8 +39,8 @@ let vidTexture: VideoTexture
 const scaleAdjust = 0.605
 const xrControllerConfig = {
   enableLighting: true,
-  imageTargets: ['golf']
-  // disableWorldTracking: true
+  imageTargets: ['golf'],
+  disableWorldTracking: !isMobile
 }
 
 export const GolfXrScene = () => {

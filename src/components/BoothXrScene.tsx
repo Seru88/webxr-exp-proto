@@ -39,6 +39,7 @@ import Dialog from './Dialog'
 import LoadingIndicator from './LoadingIndicator'
 import SplashOverlay from './SplashOverlay'
 import PoweredByPostReality from './PoweredByPostReality'
+import { isMobile } from 'react-device-detect'
 
 Effect.ShadersStore['basicVertexShader'] = `
 precision highp float;
@@ -120,7 +121,7 @@ const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
 const xrControllerConfig = {
   enableLighting: true,
-  disableWorldTracking: true
+  disableWorldTracking: !isMobile
 }
 
 export const BoothXrScene = () => {

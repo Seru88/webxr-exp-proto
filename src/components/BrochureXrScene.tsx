@@ -2,16 +2,19 @@ import '@babylonjs/loaders/glTF'
 
 import {
   AnimationGroup,
+  Color3,
   DirectionalLight,
   Engine,
   FreeCamera,
   HemisphericLight,
   Mesh,
+  PBRMaterial,
   Scene,
   SceneLoader,
   Sound,
   TransformNode,
-  Vector3
+  Vector3,
+  VideoTexture
 } from '@babylonjs/core'
 import bgm_src from 'assets/audio/brochure_bgm.mp3'
 import model_1_src from 'assets/models/brochure_model_1.glb'
@@ -19,11 +22,12 @@ import model_2_src from 'assets/models/brochure_model_2.glb'
 import point_at_src from 'assets/ui/brochure_point_at.png'
 import syncNodeWithImageTargetInfo from 'helpers/syncNodeWithImageTarget'
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
-
+import brochure_video_src from 'assets/videos/brochure.mp4'
 import Dialog from './Dialog'
 import LoadingIndicator from './LoadingIndicator'
 import PoweredByPostReality from './PoweredByPostReality'
 import SplashOverlay from './SplashOverlay'
+import { isMobile } from 'react-device-detect'
 
 let engine: Engine
 let scene: Scene
@@ -35,11 +39,12 @@ let brochure2Model: Mesh
 let brochure1AnimGroup: AnimationGroup
 let brochure2AnimGroup: AnimationGroup
 let bgm: Sound
-const scaleAdjust = 0.19
+let vidTexture: VideoTexture
+const scaleAdjust = 0.1675
 const xrControllerConfig = {
   enableLighting: true,
-  imageTargets: ['brochure_1', 'brochure_2']
-  // disableWorldTracking: true
+  imageTargets: ['brochure_1', 'brochure_2'],
+  disableWorldTracking: !isMobile
 }
 
 export const BrochureXrScene = () => {
@@ -77,6 +82,19 @@ export const BrochureXrScene = () => {
       volume: 0.5
     })
 
+    vidTexture = new VideoTexture(
+      'vid-texture',
+      brochure_video_src,
+      scene,
+      false,
+      true,
+      undefined,
+      {
+        loop: true,
+        autoPlay: false
+      }
+    )
+
     root1Node = new TransformNode('root-1-node', scene)
     root2Node = new TransformNode('root-2-node', scene)
 
@@ -95,9 +113,24 @@ export const BrochureXrScene = () => {
 
       for (const mesh of model1.meshes) {
         mesh.isPickable = false
+        if (mesh.name === 'video_page1') {
+          const mat = mesh.material as PBRMaterial
+          mat.albedoTexture = vidTexture
+          mat.emissiveTexture = vidTexture
+          mat.emissiveColor = Color3.White()
+        }
       }
       for (const mesh of model2.meshes) {
-        mesh.isPickable = false
+        if (
+          mesh.name === 'button_1_primitive0' ||
+          mesh.name === 'button_1_primitive1' ||
+          mesh.name === 'button_2_primitive0' ||
+          mesh.name === 'button_2_primitive1'
+        ) {
+          mesh.isPickable = true
+        } else {
+          mesh.isPickable = false
+        }
       }
 
       brochure1Model = model1.meshes[0] as Mesh
@@ -130,6 +163,7 @@ export const BrochureXrScene = () => {
       if (e.name === 'brochure_1') {
         syncNodeWithImageTargetInfo(root1Node, e, scaleAdjust)
         root1Node.setEnabled(true)
+        vidTexture.video.play()
       }
       if (e.name === 'brochure_2') {
         syncNodeWithImageTargetInfo(root2Node, e, scaleAdjust)
@@ -156,17 +190,33 @@ export const BrochureXrScene = () => {
     })
     scene.onXrImageLostObservable.add(e => {
       console.log(`${e.name} lost`)
+      if (e.name === 'brochure_1') {
+        root1Node.setEnabled(false)
+        brochure1AnimGroup.stop()
+        vidTexture.video.pause()
+        vidTexture.video.currentTime = 0
+      }
+      if (e.name === 'brochure_2') {
+        root2Node.setEnabled(false)
+        brochure2AnimGroup.stop()
+      }
     })
   }
 
   const startScene = () => {
     const canvas = canvasRef.current
     if (canvas) {
-      engine = new Engine(canvas, true, {
-        stencil: true,
-        preserveDrawingBuffer: true
-      })
+      engine = new Engine(
+        canvas,
+        true,
+        {
+          stencil: true,
+          preserveDrawingBuffer: true
+        },
+        true
+      )
       engine.enableOfflineSupport = false
+      engine.setHardwareScalingLevel(1 / window.devicePixelRatio)
 
       scene = new Scene(engine)
 
@@ -181,39 +231,21 @@ export const BrochureXrScene = () => {
         true
       )
 
-      // scene.onPointerDown = () => {
-      //   const result = scene.pick(
-      //     scene.pointerX,
-      //     scene.pointerY,
-      //     mesh =>
-      //       mesh.name === 'button_facebook_primitive0' ||
-      //       mesh.name === 'button_facebook_primitive1' ||
-      //       mesh.name === 'button_linkedin_primitive0' ||
-      //       mesh.name === 'button_linkedin_primitive1' ||
-      //       mesh.name === 'button_twitter_primitive0' ||
-      //       mesh.name === 'button_twitter_primitive1'
-      //   )
-      //   if (result?.pickedMesh) {
-      //     const mesh = result.pickedMesh
-      //     switch (mesh.name) {
-      //       case 'button_facebook_primitive0':
-      //       case 'button_facebook_primitive1':
-      //         window.open('https://pt-br.facebook.com/postrealityAR/', '_blank')
-      //         break
-      //       case 'button_linkedin_primitive0':
-      //       case 'button_linkedin_primitive1':
-      //         window.open(
-      //           'https://www.linkedin.com/company/post-reality',
-      //           '_blank'
-      //         )
-      //         break
-      //       case 'button_twitter_primitive0':
-      //       case 'button_twitter_primitive1':
-      //         window.open('https://mobile.twitter.com/postrealityar', '_blank')
-      //         break
-      //     }
-      //   }
-      // }
+      scene.onPointerDown = () => {
+        const result = scene.pick(
+          scene.pointerX,
+          scene.pointerY,
+          mesh =>
+            mesh.name === 'button_1_primitive0' ||
+            mesh.name === 'button_1_primitive1' ||
+            mesh.name === 'button_2_primitive0' ||
+            mesh.name === 'button_2_primitive1'
+        )
+        if (result?.pickedMesh) {
+          console.log('picked')
+          window.open('https://dmedelivers.com/', '_blank')
+        }
+      }
 
       engine.runRenderLoop(() => {
         scene.render()

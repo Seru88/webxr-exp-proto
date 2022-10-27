@@ -39,6 +39,7 @@ import Dialog from './Dialog'
 import LoadingIndicator from './LoadingIndicator'
 import PoweredByPostReality from './PoweredByPostReality'
 import SplashOverlay from './SplashOverlay'
+import { isMobile } from 'react-device-detect'
 
 Effect.ShadersStore['basicVertexShader'] = `
 precision highp float;
@@ -125,8 +126,8 @@ let orangeVidTex: VideoTexture
 let pinkVidTex: VideoTexture
 // let bgm: Sound
 const xrControllerConfig = {
-  enableLighting: true
-  // disableWorldTracking: true
+  enableLighting: true,
+  disableWorldTracking: !isMobile
 }
 
 export const CollegeXrScene = () => {
