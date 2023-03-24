@@ -53,15 +53,6 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
     }
   }, [variant])
 
-  // const bgImg = new Image()
-  // bgImg.onload = () => {
-  //   if (divRef.current) {
-  //     divRef.current.style.backgroundImage = `url(${bgImg.src})`
-  //     divRef.current.classList.remove('invisible')
-  //   }
-  // }
-  // bgImg.src = bgImageSrc
-
   useEffect(() => {
     const div = divRef.current
     if (div) {
@@ -89,6 +80,8 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           h-full
           flex
           flex-col
+          justify-center
+          items-center
           py-2
           z-[9999]
           transition-opacit
@@ -99,35 +92,28 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
         )}
         style={{ backgroundImage: `url(${bgImageSrc})` }}
       >
-        <div class='basis-9/12 flex flex-col justify-center items-center'>
-          <img class='scale-[1.03] mb-10' src={electro_logo_src} alt='' />
-          {variant === 'electro-booth' && (
-            <div class='-mt-4 mb-4 font-bold text-2xl tracking-tight text-center'>
-              Collaborative spaces to drive innovation and performance.
-            </div>
-          )}
-          <img
-            class='rounded-xl'
-            src={
-              variant === 'electro-booth'
-                ? electro_booth_thumb_src
-                : electro_globe_thumb_src
-            }
-            alt=''
-          />
-          {variant === 'electro-globe' && (
-            <div class='mt-10 font-semibold text-4xl text-[#515151] leading-tight tracking-[0.0125em]'>
-              Create a lasting impression with inspirational branded lobbies and
-              courtyards.
-            </div>
-          )}
-        </div>
-        <div class='basis-2/12 flex flex-col justify-center items-center'>
-          {children}
-        </div>
-        <div class='basis-1/12 flex flex-col justify-center items-center'>
-          <PoweredByPostReality />
-        </div>
+        <img class='scale-[1.03] mb-10' src={electro_logo_src} alt='' />
+        {variant === 'electro-booth' && (
+          <div class='-mt-4 mb-4 font-bold text-2xl tracking-tight text-center'>
+            Collaborative spaces to drive innovation and performance.
+          </div>
+        )}
+        <img
+          class='rounded-xl mb-6'
+          src={
+            variant === 'electro-booth'
+              ? electro_booth_thumb_src
+              : electro_globe_thumb_src
+          }
+          alt=''
+        />
+        {variant === 'electro-globe' && (
+          <div class='mt-4 mb-10 font-semibold text-4xl text-[#515151] leading-tight tracking-[0.0125em]'>
+            Create a lasting impression with inspirational branded lobbies and
+            courtyards.
+          </div>
+        )}
+        {children}
       </div>
     )
   }

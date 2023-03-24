@@ -1,4 +1,4 @@
-import BackToGalleryLink from 'components/BackToGalleryLink'
+// import BackToGalleryLink from 'components/BackToGalleryLink'
 import { ElectroGlobeXrScene } from 'components/ElectroGlobeXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
@@ -22,7 +22,7 @@ const ElectroGlobe: FunctionalComponent<RoutableProps> = () => {
         variant='electro-globe'
         text='Preview in Augmented Reality'
       />
-      <BackToGalleryLink />
+      {/* <BackToGalleryLink /> */}
     </SplashOverlay>
   )
 }

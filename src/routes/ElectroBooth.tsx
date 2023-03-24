@@ -1,4 +1,4 @@
-import BackToGalleryLink from 'components/BackToGalleryLink'
+// import BackToGalleryLink from 'components/BackToGalleryLink'
 import { ElectroBoothXrScene } from 'components/ElectroBoothXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
@@ -22,7 +22,7 @@ const ElectroBooth: FunctionalComponent<RoutableProps> = () => {
         variant='electro-booth'
         text='Enter AR Booth'
       />
-      <BackToGalleryLink />
+      {/* <BackToGalleryLink /> */}
     </SplashOverlay>
   )
 }

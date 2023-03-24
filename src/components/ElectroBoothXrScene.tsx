@@ -32,9 +32,9 @@ import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
 import Dialog from './Dialog'
-import LoadingIndicator from './LoadingIndicator'
-import SplashOverlay from './SplashOverlay'
-import PoweredByPostReality from './PoweredByPostReality'
+// import LoadingIndicator from './LoadingIndicator'
+// import SplashOverlay from './SplashOverlay'
+// import PoweredByPostReality from './PoweredByPostReality'
 import { isMobile } from 'react-device-detect'
 
 let engine: Engine
@@ -368,9 +368,9 @@ export const ElectroBoothXrScene = () => {
 
   return (
     <>
-      <SplashOverlay open={!started} variant='electro-booth'>
+      {/* <SplashOverlay open={!started} variant='electro-booth'>
         <LoadingIndicator progress={progress} variant='electro-booth' />
-      </SplashOverlay>
+      </SplashOverlay> */}
       <Dialog open={showInstructions}>
         <div class='uppercase text-center py-3 text-lg'>Instructions</div>
         <hr />
@@ -408,15 +408,17 @@ export const ElectroBoothXrScene = () => {
       >
         <img class='w-10 h-10' src={info_btn_src} alt='Instructions' />
       </button> */}
-      <button
-        class='btn btn-electro-booth absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
-        onClick={() => setShowInstructions(true)}
-      >
-        i
-      </button>
-      <div class='absolute bottom-2 left-2 pointer-events-none'>
+      {started && (
+        <button
+          class='btn btn-electro-booth absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
+          onClick={() => setShowInstructions(true)}
+        >
+          i
+        </button>
+      )}
+      {/* <div class='absolute bottom-2 left-2 pointer-events-none'>
         <PoweredByPostReality />
-      </div>
+      </div> */}
       <canvas
         id='renderCanvas'
         ref={canvasRef}

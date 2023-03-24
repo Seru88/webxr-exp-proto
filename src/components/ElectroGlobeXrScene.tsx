@@ -26,9 +26,9 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { isMobile } from 'react-device-detect'
 
 import Dialog from './Dialog'
-import LoadingIndicator from './LoadingIndicator'
-import PoweredByPostReality from './PoweredByPostReality'
-import SplashOverlay from './SplashOverlay'
+// import LoadingIndicator from './LoadingIndicator'
+// import SplashOverlay from './SplashOverlay'
+// import PoweredByPostReality from './PoweredByPostReality'
 
 let engine: Engine
 let scene: Scene
@@ -271,9 +271,9 @@ export const ElectroGlobeXrScene = () => {
 
   return (
     <>
-      <SplashOverlay open={!started} variant='electro-globe'>
+      {/* <SplashOverlay open={!started} variant='electro-globe'>
         <LoadingIndicator progress={progress} variant='electro-globe' />
-      </SplashOverlay>
+      </SplashOverlay> */}
       <Dialog open={showInstructions}>
         <div class='uppercase text-center py-3 text-lg'>Instructions</div>
         <hr />
@@ -311,15 +311,17 @@ export const ElectroGlobeXrScene = () => {
       >
         <img class='w-10 h-10' src={info_btn_src} alt='Instructions' />
       </button> */}
-      <button
-        class='btn btn-electro-globe absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
-        onClick={() => setShowInstructions(true)}
-      >
-        i
-      </button>
-      <div class='absolute bottom-2 left-2 pointer-events-none'>
+      {started && (
+        <button
+          class='btn btn-electro-globe absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
+          onClick={() => setShowInstructions(true)}
+        >
+          i
+        </button>
+      )}
+      {/* <div class='absolute bottom-2 left-2 pointer-events-none'>
         <PoweredByPostReality />
-      </div>
+      </div> */}
       <canvas
         id='renderCanvas'
         ref={canvasRef}
