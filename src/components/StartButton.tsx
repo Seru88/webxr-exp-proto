@@ -1,19 +1,15 @@
 import clsx from 'clsx'
 import { FunctionalComponent, JSX } from 'preact'
+import { ThemeVariant } from 'types/themeVariant'
 
 type StartButtonProps = {
-  variant:
-    | 'billboard'
-    | 'booth'
-    | 'brochure'
-    | 'candy'
-    | 'car'
-    | 'college'
-    | 'golf'
+  variant: ThemeVariant
+  text?: string
 } & JSX.HTMLAttributes<HTMLButtonElement>
 
 const StartButton: FunctionalComponent<StartButtonProps> = ({
   variant,
+  text = 'Start',
   ...rest
 }) => {
   return (
@@ -25,11 +21,13 @@ const StartButton: FunctionalComponent<StartButtonProps> = ({
         variant === 'candy' && 'btn btn-candy',
         variant === 'car' && 'btn btn-car',
         variant === 'college' && 'btn btn-college',
-        variant === 'golf' && 'btn btn-golf'
+        variant === 'golf' && 'btn btn-golf',
+        variant === 'electro-booth' && 'btn btn-electro-booth',
+        variant === 'electro-globe' && 'btn btn-electro-globe w-full'
       )}
       {...rest}
     >
-      Start
+      {text}
     </button>
   )
 }

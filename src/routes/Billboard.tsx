@@ -1,6 +1,5 @@
 import BackToGalleryLink from 'components/BackToGalleryLink'
 import { BillboardXrScene } from 'components/BillboardXrScene'
-// import { BoothXrScene } from 'components/BoothXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
 import { FunctionalComponent } from 'preact'
@@ -19,7 +18,6 @@ const Billboard: FunctionalComponent<RoutableProps> = () => {
   return (
     <SplashOverlay open={true} variant='billboard'>
       <StartButton onClick={onStartBtnClick} variant='billboard' />
-      {/* <h1 class='text-3xl font-bold'>Coming Soon</h1> */}
       <BackToGalleryLink />
     </SplashOverlay>
   )

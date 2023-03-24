@@ -1,15 +1,9 @@
 import clsx from 'clsx'
 import { FC } from 'preact/compat'
+import { ThemeVariant } from 'types/themeVariant'
 
 interface ProgressBarProps {
-  variant:
-    | 'billboard'
-    | 'booth'
-    | 'brochure'
-    | 'candy'
-    | 'car'
-    | 'college'
-    | 'golf'
+  variant: ThemeVariant
   value?: number
 }
 
@@ -25,7 +19,9 @@ const ProgressBar: FC<ProgressBarProps> = ({ variant, value }) => {
         variant === 'candy' && 'bg-candy',
         variant === 'car' && 'bg-car',
         variant === 'college' && 'bg-college',
-        variant === 'golf' && 'bg-golf'
+        variant === 'golf' && 'bg-golf',
+        variant === 'electro-globe' && 'bg-electro-globe',
+        variant === 'electro-booth' && 'bg-electro-booth'
       )}
     >
       <div

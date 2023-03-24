@@ -22,7 +22,6 @@ import {
   Vector3,
   VideoTexture
 } from '@babylonjs/core'
-// import info_btn_src from 'assets/ui/booth_info_btn.png'
 import model_src from 'assets/models/booth_model.glb'
 import bgm_src from 'assets/audio/booth_bgm.mp3'
 import cursor_src from 'assets/textures/booth_cursor.png'

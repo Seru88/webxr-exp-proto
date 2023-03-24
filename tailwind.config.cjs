@@ -14,7 +14,9 @@ module.exports = {
         candy: '#F26EBA',
         car: '#216D6F',
         college: '#38BBF5',
-        golf: '#D51900'
+        golf: '#D51900',
+        'electro-booth': '#EA3212',
+        'electro-globe': '#515151'
       },
       keyframes: {
         indeterminate: {
@@ -33,7 +35,7 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Montserrat', 'sans-serif']
+        sans: ['Lexend', 'sans-serif']
       }
     }
   },

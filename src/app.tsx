@@ -86,6 +86,28 @@ export function App() {
             </SplashOverlay>
           )}
         />
+        <AsyncRoute
+          path='/electro-booth'
+          getComponent={() =>
+            import('routes/ElectroBooth').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='electro-booth'>
+              <LoadingIndicator variant='electro-booth' showText={false} />
+            </SplashOverlay>
+          )}
+        />
+        <AsyncRoute
+          path='/electro-globe'
+          getComponent={() =>
+            import('routes/ElectroGlobe').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='electro-globe'>
+              <LoadingIndicator variant='electro-globe' showText={false} />
+            </SplashOverlay>
+          )}
+        />
       </Router>
     </div>
   )

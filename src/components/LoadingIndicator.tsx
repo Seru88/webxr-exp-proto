@@ -1,18 +1,12 @@
 import clsx from 'clsx'
 import { FunctionalComponent } from 'preact'
 import ProgressBar from 'components/ProgressBar'
+import { ThemeVariant } from 'types/themeVariant'
 
 type LoadingIndicatorProps = {
   progress?: number
   showText?: boolean
-  variant:
-    | 'billboard'
-    | 'booth'
-    | 'brochure'
-    | 'candy'
-    | 'car'
-    | 'college'
-    | 'golf'
+  variant: ThemeVariant
 }
 
 const LoadingIndicator: FunctionalComponent<LoadingIndicatorProps> = ({
@@ -35,6 +29,8 @@ const LoadingIndicator: FunctionalComponent<LoadingIndicatorProps> = ({
           variant === 'car' && 'text-car',
           variant === 'college' && 'text-college',
           variant === 'golf' && 'text-golf',
+          variant === 'electro-globe' && 'text-electro-globe',
+          variant === 'electro-booth' && 'text-electro-booth',
           'text-lg',
           'uppercase',
           'font-semibold'

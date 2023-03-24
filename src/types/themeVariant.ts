@@ -1,0 +1,10 @@
+export type ThemeVariant =
+  | 'billboard'
+  | 'booth'
+  | 'brochure'
+  | 'candy'
+  | 'car'
+  | 'college'
+  | 'golf'
+  | 'electro-booth'
+  | 'electro-globe'
