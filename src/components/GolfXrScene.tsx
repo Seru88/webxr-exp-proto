@@ -188,7 +188,7 @@ export const GolfXrScene = () => {
               break
             case 'button_website_primitive0':
             case 'button_website_primitive1':
-              window.open('https://firstteedc.org/', '_blank')
+              window.open('https://firstteedc.org/', '_self')
               break
           }
         }

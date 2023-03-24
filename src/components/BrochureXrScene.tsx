@@ -91,7 +91,8 @@ export const BrochureXrScene = () => {
       undefined,
       {
         loop: true,
-        autoPlay: false
+        autoPlay: true,
+        muted: true
       }
     )
 
@@ -128,6 +129,7 @@ export const BrochureXrScene = () => {
           mesh.name === 'button_2_primitive1'
         ) {
           mesh.isPickable = true
+          // mesh.setEnabled(false)
         } else {
           mesh.isPickable = false
         }
@@ -163,6 +165,7 @@ export const BrochureXrScene = () => {
       if (e.name === 'brochure_1') {
         syncNodeWithImageTargetInfo(root1Node, e, scaleAdjust)
         root1Node.setEnabled(true)
+        vidTexture.video.currentTime = 0
         vidTexture.video.play()
       }
       if (e.name === 'brochure_2') {
@@ -242,8 +245,7 @@ export const BrochureXrScene = () => {
             mesh.name === 'button_2_primitive1'
         )
         if (result?.pickedMesh) {
-          console.log('picked')
-          window.open('https://dmedelivers.com/', '_blank')
+          window.open('https://dmedelivers.com/', '_self')
         }
       }
 
