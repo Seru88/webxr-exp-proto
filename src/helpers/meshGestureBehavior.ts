@@ -12,7 +12,7 @@ const meshGestureBehavior = (
   let startDistance = 0
   let startAngle = 0
   let touchStartAngle = 0
-  const minScale = 0.5
+  const minScale = 0.1
   const maxScale = 4
   const scene = sceneObj.getScene()
 
