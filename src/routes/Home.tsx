@@ -128,7 +128,7 @@ const ExperienceRouteLinkCard: FunctionalComponent<
 
 const Home: FunctionalComponent<RoutableProps> = () => {
   return (
-    <div class='bg-neutral-50 min-h-full flex flex-col'>
+    <div class='min-h-full flex flex-col'>
       <div class='w-full text-center font-semibold p-3 mb-5 border-b-2 bg-white'>
         <h1>WebAR Gallery</h1>
       </div>

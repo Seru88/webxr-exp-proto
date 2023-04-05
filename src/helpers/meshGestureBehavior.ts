@@ -59,7 +59,7 @@ const meshGestureBehavior = (
     return delta - start
   }
 
-  canvas.addEventListener('touchstart', event => {
+  const handleTouchStart = (event: TouchEvent) => {
     const touches = event.touches.length
     if (touches === 1) {
       event.preventDefault()
@@ -71,9 +71,10 @@ const meshGestureBehavior = (
       touchStartAngle = getTouchAngle(x0, x1, y0, y1)
       startAngle = currentRotation
     }
-  })
+  }
+  canvas.addEventListener('touchstart', handleTouchStart)
 
-  canvas.addEventListener('touchmove', event => {
+  const handleTouchMove = (event: TouchEvent) => {
     const touches = event.touches.length
     if (touches === 1) {
       startingPoint = startingPoint ?? getGroundPosition(event)
@@ -101,9 +102,10 @@ const meshGestureBehavior = (
         sceneObj.rotation.z
       )
     }
-  })
+  }
+  canvas.addEventListener('touchmove', handleTouchMove)
 
-  canvas.addEventListener('touchend', event => {
+  const handleTouchEnd = (event: TouchEvent) => {
     if (event.touches.length === 1) {
       event.preventDefault()
       if (startingPoint) {
@@ -111,7 +113,14 @@ const meshGestureBehavior = (
         return
       }
     }
-  })
+  }
+  canvas.addEventListener('touchend', handleTouchEnd)
+
+  return () => {
+    canvas.removeEventListener('touchstart', handleTouchStart)
+    canvas.removeEventListener('touchmove', handleTouchMove)
+    canvas.removeEventListener('touchend', handleTouchEnd)
+  }
 }
 
 export default meshGestureBehavior

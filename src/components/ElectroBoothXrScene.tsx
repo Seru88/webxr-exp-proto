@@ -3,17 +3,20 @@ import '@babylonjs/loaders/glTF'
 import {
   AbstractMesh,
   AnimationGroup,
+  ArcRotateCamera,
   Color3,
+  CubeTexture,
   DirectionalLight,
   Engine,
+  EnvironmentHelper,
   FreeCamera,
   HemisphericLight,
+  HighlightLayer,
   Mesh,
   MeshBuilder,
   PBRMaterial,
   Scene,
   SceneLoader,
-  // Sound,
   StandardMaterial,
   Texture,
   TransformNode,
@@ -21,25 +24,27 @@ import {
   VideoTexture
 } from '@babylonjs/core'
 import model_src from 'assets/models/electro_booth_model.glb'
-// import bgm_src from 'assets/audio/booth_bgm.mp3'
-import cursor_src from 'assets/textures/booth_cursor.png'
-import screen1_video_src from 'assets/videos/screen1_video.mp4'
+import cursor_src from 'assets/textures/electrosonic_cursor.png'
 import pinch_icon_src from 'assets/ui/pinch_icon.png'
 import surface_icon_src from 'assets/ui/surface_icon.png'
 import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
+import screen1_video_src from 'assets/videos/screen1_video.mp4'
 import screen2_video_src from 'assets/videos/screen2_video.mp4'
 import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useRef, useState } from 'preact/hooks'
+import { isMobile } from 'react-device-detect'
 
 import Dialog from './Dialog'
+
+// import bgm_src from 'assets/audio/booth_bgm.mp3'
 // import LoadingIndicator from './LoadingIndicator'
 // import SplashOverlay from './SplashOverlay'
 // import PoweredByPostReality from './PoweredByPostReality'
-import { isMobile } from 'react-device-detect'
-
 let engine: Engine
 let scene: Scene
-let freeCam: FreeCamera
+let envHelper: EnvironmentHelper | null
+let orbitCam: ArcRotateCamera
+let arCam: FreeCamera
 let surface: Mesh
 let placeCursor: Mesh
 let rootNode: TransformNode
@@ -51,6 +56,16 @@ let screen2VidTex: VideoTexture
 const startScale = Vector3.Zero() // Initial scale value for our model
 const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
+const camFOV = 0.8
+const camInertia = 0.9
+const camRadius = 50
+const camMinZ = 1
+const camAlpha = Math.PI
+const camBeta = Math.PI / 2.5
+const camLowerRadius = 5
+const camUpperRadius = 50
+const camWheelDeltaPercentage = 0.01
+const camWheelPrecision = 50
 const xrControllerConfig = {
   enableLighting: true,
   disableWorldTracking: !isMobile
@@ -60,133 +75,10 @@ export const ElectroBoothXrScene = () => {
   const [started, setStarted] = useState(false)
   const [progress, setProgress] = useState(0)
   const [showInstructions, setShowInstructions] = useState(false)
+  const [isArMode, setIsArMode] = useState(false)
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-
-  // Populates some object into an XR scene and sets the initial camera position.
-  const initXrScene = () => {
-    const dirLight = new DirectionalLight(
-      'DirectionalLight',
-      new Vector3(-5, -10, 7),
-      scene
-    )
-    dirLight.intensity = 0.7
-
-    const ambientLight = new HemisphericLight(
-      'AmbientLight',
-      Vector3.Up(),
-      scene
-    )
-    ambientLight.intensity = 1
-
-    // Create surface mesh
-    surface = MeshBuilder.CreateGround('ground', {
-      width: 150,
-      height: 150
-    })
-    const surfaceMaterial = new StandardMaterial('groundMaterial', scene)
-    surfaceMaterial.alpha = 0
-    surface.material = surfaceMaterial
-    surface.receiveShadows = true
-
-    const cursorTexture = new Texture(cursor_src, scene)
-    cursorTexture.hasAlpha = true
-    const cursorMat = new StandardMaterial('cursor-mat', scene)
-
-    cursorMat.diffuseTexture = cursorTexture
-    cursorMat.emissiveColor = Color3.White()
-    cursorMat.disableLighting = true
-    placeCursor = MeshBuilder.CreateGround(
-      'cursor-mesh',
-      { width: 1, height: 1 },
-      scene
-    )
-    placeCursor.isPickable = false
-    placeCursor.scaling.z = -1
-    placeCursor.scaling.x = -1
-    placeCursor.material = cursorMat
-
-    // bgm = new Sound('bgm', bgm_src, scene, null, {
-    //   loop: true,
-    //   autoplay: false,
-    //   volume: 0.5
-    // })
-
-    screen1VidTex = new VideoTexture(
-      'screen1-vid',
-      screen1_video_src,
-      scene,
-      undefined,
-      true,
-      undefined,
-      { loop: true, autoPlay: false, muted: true }
-    )
-    screen2VidTex = new VideoTexture(
-      'screen2-vid',
-      screen2_video_src,
-      scene,
-      undefined,
-      true,
-      undefined,
-      { loop: true, autoPlay: false, muted: true }
-    )
-
-    rootNode = new TransformNode('root-node', scene)
-    const canvas = engine.getRenderingCanvas()
-    if (canvas) {
-      meshGestureBehavior(canvas, rootNode)
-    }
-
-    SceneLoader.ImportMesh(
-      '',
-      model_src,
-      '',
-      scene,
-      (meshes, ps, skl, animationsGroup) => {
-        let screen1: AbstractMesh | undefined
-        let screen2: AbstractMesh | undefined
-
-        animGroup = animationsGroup[0]
-        animGroup.stop()
-
-        model = meshes[0] as Mesh
-        model.rotation = new Vector3(0, 0, 0)
-        model.parent = rootNode
-        for (const mesh of meshes) {
-          mesh.isPickable = false
-          if (mesh.name === 'Screen1') screen1 = mesh
-          else if (mesh.name === 'Screen2') screen2 = mesh
-        }
-
-        if (screen1) {
-          const mat = screen1.material as PBRMaterial
-          mat.albedoTexture = screen1VidTex
-          mat.emissiveTexture = screen1VidTex
-          mat.emissiveColor = Color3.White()
-          screen1.material = mat
-        }
-        if (screen2) {
-          const mat = screen2.material as PBRMaterial
-          mat.albedoTexture = screen2VidTex
-          mat.emissiveTexture = screen2VidTex
-          mat.emissiveColor = Color3.White()
-          screen2.material = mat
-        }
-        setStarted(true)
-      },
-      xhr => {
-        setProgress((xhr.loaded / xhr.total) * 100)
-      },
-      null,
-      '.glb'
-    )
-    rootNode.scaling.copyFrom(startScale)
-    rootNode.setEnabled(false)
-
-    // Set the initial camera position relative to the scene we just laid out. This must be at a
-    // height greater than y=0.
-    freeCam.position = new Vector3(0, 3, 0)
-  }
+  const removeMeshBehaviorRef = useRef<() => void>()
 
   const placeObjectTouchHandler = (e: TouchEvent) => {
     // Reset AR Camera on two finger tap.
@@ -223,7 +115,7 @@ export const ElectroBoothXrScene = () => {
         })
         .onComplete(() => {
           // bgm.play()
-          animGroup.play(true)
+          // animGroup.play(true)
         })
         .start() // Start the tween immediately.
     }
@@ -237,58 +129,185 @@ export const ElectroBoothXrScene = () => {
         preserveDrawingBuffer: true
       })
       engine.enableOfflineSupport = false
-
       scene = new Scene(engine)
 
-      freeCam = new FreeCamera('mainCam', new Vector3(0, 0, 0), scene)
-      const xrCamConfig = {
-        allowedDevices: window.XR8.XrConfig.device().ANY
-      }
-      // Connect the camera to the XR engine and show camera feed
-      freeCam.addBehavior(
-        window.XR8.Babylonjs.xrCameraBehavior(xrCamConfig),
-        true
+      const dirLight = new DirectionalLight(
+        'DirectionalLight',
+        new Vector3(-5, -10, 7),
+        scene
+      )
+      dirLight.intensity = 0.7
+
+      const ambientLight = new HemisphericLight(
+        'AmbientLight',
+        Vector3.Up(),
+        scene
+      )
+      ambientLight.intensity = 1
+
+      orbitCam = new ArcRotateCamera(
+        'mainCam',
+        camAlpha,
+        camBeta,
+        camRadius,
+        Vector3.Zero(),
+        scene
+      )
+      orbitCam.inertia = camInertia
+      orbitCam.fov = camFOV
+      orbitCam.minZ = camMinZ
+      orbitCam.lowerRadiusLimit = camLowerRadius
+      orbitCam.upperRadiusLimit = camUpperRadius
+      orbitCam.wheelDeltaPercentage = camWheelDeltaPercentage
+      orbitCam.wheelPrecision = camWheelPrecision
+      orbitCam.attachControl(canvas, true)
+
+      arCam = new FreeCamera('arCam', new Vector3(0, 0, 0), scene)
+      arCam.position = new Vector3(0, 3, 0)
+      arCam.setEnabled(false)
+
+      // Create surface mesh
+      surface = MeshBuilder.CreateGround('ground', {
+        width: 150,
+        height: 150
+      })
+      const surfaceMaterial = new StandardMaterial('groundMaterial', scene)
+      surfaceMaterial.alpha = 0
+      surface.material = surfaceMaterial
+      surface.receiveShadows = true
+
+      const cursorTexture = new Texture(cursor_src, scene)
+      cursorTexture.hasAlpha = true
+      const cursorMat = new StandardMaterial('cursor-mat', scene)
+
+      cursorMat.diffuseTexture = cursorTexture
+      cursorMat.emissiveColor = Color3.White()
+      cursorMat.disableLighting = true
+      placeCursor = MeshBuilder.CreateGround(
+        'cursor-mesh',
+        { width: 1, height: 1 },
+        scene
+      )
+      placeCursor.isPickable = false
+      placeCursor.scaling.z = -1
+      placeCursor.scaling.x = -1
+      placeCursor.material = cursorMat
+      placeCursor.setEnabled(false)
+
+      const hl = new HighlightLayer('hl', scene, { camera: arCam })
+      hl.addMesh(placeCursor, Color3.Black(), true)
+      hl.addExcludedMesh(surface)
+      hl.innerGlow = false
+      hl.blurHorizontalSize = 3
+      hl.blurVerticalSize = 3
+
+      screen1VidTex = new VideoTexture(
+        'screen1-vid',
+        screen1_video_src,
+        scene,
+        undefined,
+        true,
+        undefined,
+        { loop: true, autoPlay: true, muted: true }
+      )
+      screen2VidTex = new VideoTexture(
+        'screen2-vid',
+        screen2_video_src,
+        scene,
+        undefined,
+        true,
+        undefined,
+        { loop: true, autoPlay: true, muted: true }
       )
 
-      canvas.addEventListener('touchstart', placeObjectTouchHandler, true) // Add touch listener.
+      rootNode = new TransformNode('root-node', scene)
 
-      // scene.onPointerDown = () => {
-      //   const result = scene.pick(
-      //     scene.pointerX,
-      //     scene.pointerY,
-      //     mesh =>
-      //       mesh.name === 'button_facebook_primitive0' ||
-      //       mesh.name === 'button_facebook_primitive1' ||
-      //       mesh.name === 'button_linkedin_primitive0' ||
-      //       mesh.name === 'button_linkedin_primitive1' ||
-      //       mesh.name === 'button_twitter_primitive0' ||
-      //       mesh.name === 'button_twitter_primitive1'
-      //   )
-      //   if (result?.pickedMesh) {
-      //     const mesh = result.pickedMesh
-      //     switch (mesh.name) {
-      //       case 'button_facebook_primitive0':
-      //       case 'button_facebook_primitive1':
-      //         window.open('https://pt-br.facebook.com/postrealityAR/', '_blank')
-      //         break
-      //       case 'button_linkedin_primitive0':
-      //       case 'button_linkedin_primitive1':
-      //         window.open(
-      //           'https://www.linkedin.com/company/post-reality',
-      //           '_blank'
-      //         )
-      //         break
-      //       case 'button_twitter_primitive0':
-      //       case 'button_twitter_primitive1':
-      //         window.open('https://mobile.twitter.com/postrealityar', '_blank')
-      //         break
-      //     }
-      //   }
-      // }
+      SceneLoader.ImportMesh(
+        '',
+        model_src,
+        '',
+        scene,
+        meshes => {
+          let screen1: AbstractMesh | undefined
+          let screen2: AbstractMesh | undefined
+
+          // animGroup = animationsGroup[0]
+          // animGroup.stop()
+
+          model = meshes[0] as Mesh
+          model.rotation = new Vector3(0, 0, 0)
+          model.parent = rootNode
+          for (const mesh of meshes) {
+            mesh.isPickable = false
+            if (mesh.name === 'Screen1') screen1 = mesh
+            else if (mesh.name === 'Screen2') screen2 = mesh
+          }
+
+          if (screen1) {
+            const mat = screen1.material as PBRMaterial
+            mat.albedoTexture = screen1VidTex
+            mat.emissiveTexture = screen1VidTex
+            mat.emissiveColor = Color3.White()
+            screen1.material = mat
+          }
+          if (screen2) {
+            const mat = screen2.material as PBRMaterial
+            mat.albedoTexture = screen2VidTex
+            mat.emissiveTexture = screen2VidTex
+            mat.emissiveColor = Color3.White()
+            screen2.material = mat
+          }
+          hl.addExcludedMesh(model)
+          setStarted(true)
+        },
+        xhr => {
+          setProgress((xhr.loaded / xhr.total) * 100)
+        },
+        null,
+        '.glb'
+      )
+
+      /**
+       * Environment texture for 3d preview/skybox.
+       */
+      const hdrTexture = CubeTexture.CreateFromPrefilteredData(
+        'https://assets.babylonjs.com/environments/environmentSpecular.env',
+        scene
+      )
+      hdrTexture.coordinatesMode = Texture.CUBIC_MODE
+      hdrTexture.updateSamplingMode(Texture.LINEAR_LINEAR)
+
+      /**
+       * 3D preview environment.
+       */
+      envHelper = scene.createDefaultEnvironment({
+        createGround: false,
+        // groundColor: Color3.Gray(),
+        // groundSize: 40,
+        skyboxSize: 100,
+        environmentTexture: hdrTexture
+      })
+      if (envHelper?.skybox) {
+        const skyBoxMaterial = new PBRMaterial('skybox-mat', scene)
+        skyBoxMaterial.reflectionTexture = hdrTexture.clone()
+        skyBoxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE
+        skyBoxMaterial.backFaceCulling = false
+
+        skyBoxMaterial.microSurface = 0.7
+        skyBoxMaterial.disableLighting = true
+        envHelper.skybox.material = skyBoxMaterial
+        envHelper.skybox.infiniteDistance = true
+        envHelper.skybox.isPickable = false
+        hl.addExcludedMesh(envHelper.skybox)
+      }
 
       scene.registerBeforeRender(() => {
-        if (rootNode && rootNode.isEnabled() === false && placeCursor) {
-          const ray = freeCam.getForwardRay(999)
+        if (
+          rootNode &&
+          rootNode.isEnabled() === false &&
+          placeCursor.isEnabled()
+        ) {
+          const ray = arCam.getForwardRay(999)
           const pickInfo = scene.pickWithRay(ray)
           if (pickInfo?.pickedMesh === surface) {
             const { pickedPoint } = pickInfo
@@ -299,8 +318,8 @@ export const ElectroBoothXrScene = () => {
                 0.4
               )
               placeCursor.rotation.y = Math.atan2(
-                freeCam.position.x - placeCursor.position.x,
-                freeCam.position.z - placeCursor.position.z
+                arCam.position.x - placeCursor.position.x,
+                arCam.position.z - placeCursor.position.z
               )
             }
           }
@@ -316,6 +335,45 @@ export const ElectroBoothXrScene = () => {
         engine.resize()
       })
     }
+  }
+
+  const toggleArMode = () => {
+    const canvas = canvasRef.current
+    if (canvas === null) return
+    if (!isArMode) {
+      scene.setActiveCameraById(arCam.id)
+      orbitCam.detachControl()
+      orbitCam.setEnabled(false)
+      arCam.setEnabled(true)
+      if (window.XR8.isPaused()) {
+        window.XR8.resume()
+      } else {
+        onxrloaded()
+      }
+      rootNode.scaling.copyFrom(startScale)
+      rootNode.position = Vector3.Zero()
+      rootNode.setEnabled(false)
+      envHelper?.skybox?.setEnabled(false)
+      placeCursor.setEnabled(true)
+      removeMeshBehaviorRef.current = meshGestureBehavior(canvas, rootNode)
+      canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
+    } else {
+      window.XR8.pause()
+      scene.setActiveCameraById(orbitCam.id)
+      orbitCam.alpha = camAlpha
+      orbitCam.beta = camBeta
+      orbitCam.radius = camRadius
+      orbitCam.setEnabled(true)
+      orbitCam.attachControl()
+      arCam.setEnabled(false)
+      canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
+      rootNode.scaling = Vector3.One()
+      rootNode.position = Vector3.Zero()
+      rootNode.setEnabled(true)
+      envHelper?.skybox?.setEnabled(true)
+      if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
+    }
+    setIsArMode(!isArMode)
   }
 
   const onxrloaded = () => {
@@ -339,25 +397,23 @@ export const ElectroBoothXrScene = () => {
           config: object
         }) => {
           if (status === 'hasVideo') {
-            initXrScene() // Add objects to the scene and set starting camera position.
+            // initXrScene() // Add objects to the scene and set starting camera position.
           } else if (status === 'failed') {
             alert('Camera permission required to view AR.')
           }
         }
       }
     ])
-    startScene()
+    arCam.addBehavior(
+      window.XR8.Babylonjs.xrCameraBehavior({
+        allowedDevices: window.XR8.XrConfig.device().ANY
+      }),
+      true
+    )
   }
 
   useEffect(() => {
-    const load = () => {
-      window.XRExtras.Loading.showLoading({ onxrloaded })
-    }
-    if (window.XRExtras) {
-      load()
-    } else {
-      window.addEventListener('xrextrasloaded', load)
-    }
+    startScene()
   }, [])
 
   useEffect(() => {
@@ -414,6 +470,14 @@ export const ElectroBoothXrScene = () => {
           onClick={() => setShowInstructions(true)}
         >
           i
+        </button>
+      )}
+      {started && (
+        <button
+          class='btn btn-electro-booth absolute bottom-10 left-1/2 -translate-x-1/2'
+          onClick={toggleArMode}
+        >
+          {isArMode ? 'View in 3D' : 'View in AR'}
         </button>
       )}
       {/* <div class='absolute bottom-2 left-2 pointer-events-none'>

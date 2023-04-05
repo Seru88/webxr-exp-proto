@@ -20,7 +20,7 @@ const ElectroBooth: FunctionalComponent<RoutableProps> = () => {
       <StartButton
         onClick={onStartBtnClick}
         variant='electro-booth'
-        text='Enter AR Booth'
+        // text='Enter AR Booth'
       />
       {/* <BackToGalleryLink /> */}
     </SplashOverlay>

@@ -20,7 +20,7 @@ const ElectroGlobe: FunctionalComponent<RoutableProps> = () => {
       <StartButton
         onClick={onStartBtnClick}
         variant='electro-globe'
-        text='Preview in Augmented Reality'
+        // text='Preview in Augmented Reality'
       />
       {/* <BackToGalleryLink /> */}
     </SplashOverlay>
