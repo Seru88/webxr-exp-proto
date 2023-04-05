@@ -65,7 +65,7 @@ const xrControllerConfig = {
 
 export const ElectroGlobeXrScene = () => {
   const [started, setStarted] = useState(false)
-  const [progress, setProgress] = useState(0)
+  // const [progress, setProgress] = useState(0)
   const [showInstructions, setShowInstructions] = useState(false)
   const [isArMode, setIsArMode] = useState(false)
 
@@ -205,9 +205,10 @@ export const ElectroGlobeXrScene = () => {
           hl.addExcludedMesh(model)
           setStarted(true)
         },
-        xhr => {
-          setProgress((xhr.loaded / xhr.total) * 100)
-        },
+        // xhr => {
+        //   setProgress((xhr.loaded / xhr.total) * 100)
+        // },
+        undefined,
         null,
         '.glb'
       )

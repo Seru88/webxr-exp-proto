@@ -2,7 +2,6 @@ import '@babylonjs/loaders/glTF'
 
 import {
   AbstractMesh,
-  AnimationGroup,
   ArcRotateCamera,
   Color3,
   CubeTexture,
@@ -50,7 +49,7 @@ let placeCursor: Mesh
 let rootNode: TransformNode
 let model: Mesh
 // let bgm: Sound
-let animGroup: AnimationGroup
+// let animGroup: AnimationGroup
 let screen1VidTex: VideoTexture
 let screen2VidTex: VideoTexture
 const startScale = Vector3.Zero() // Initial scale value for our model
@@ -73,7 +72,7 @@ const xrControllerConfig = {
 
 export const ElectroBoothXrScene = () => {
   const [started, setStarted] = useState(false)
-  const [progress, setProgress] = useState(0)
+  // const [progress, setProgress] = useState(0)
   const [showInstructions, setShowInstructions] = useState(false)
   const [isArMode, setIsArMode] = useState(false)
 
@@ -260,9 +259,10 @@ export const ElectroBoothXrScene = () => {
           hl.addExcludedMesh(model)
           setStarted(true)
         },
-        xhr => {
-          setProgress((xhr.loaded / xhr.total) * 100)
-        },
+        // xhr => {
+        //   setProgress((xhr.loaded / xhr.total) * 100)
+        // },
+        undefined,
         null,
         '.glb'
       )
