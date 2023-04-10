@@ -1,4 +1,4 @@
-import '@babylonjs/core/Helpers/sceneHelpers '
+import '@babylonjs/core/Helpers/sceneHelpers'
 import '@babylonjs/core/Materials/Textures/Loaders/envTextureLoader'
 import '@babylonjs/loaders/glTF'
 
@@ -298,7 +298,6 @@ const FordXrScene: FunctionalComponent = () => {
             sessionMode: 'immersive-ar'
           },
           optionalFeatures: true,
-          // @ts-expect-error should work just fine.
           pointerSelectionOptions: {
             enablePointerSelectionOnAllControllers: true
           }

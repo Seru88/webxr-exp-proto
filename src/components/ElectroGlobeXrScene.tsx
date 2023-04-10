@@ -300,6 +300,7 @@ export const ElectroGlobeXrScene = () => {
       rootNode.setEnabled(false)
       envHelper?.skybox?.setEnabled(false)
       placeCursor.setEnabled(true)
+      surface.isPickable = true
       removeMeshBehaviorRef.current = meshGestureBehavior(canvas, rootNode)
       canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
     } else {
@@ -316,6 +317,8 @@ export const ElectroGlobeXrScene = () => {
       rootNode.position = Vector3.Zero()
       rootNode.setEnabled(true)
       envHelper?.skybox?.setEnabled(true)
+      placeCursor.setEnabled(false)
+      surface.isPickable = false
       if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
     }
     setIsArMode(!isArMode)
