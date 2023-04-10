@@ -78,10 +78,11 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           fixed
           w-screen
           h-full
-          flex flex-col
+          flex
+          flex-col
           justify-center
           items-center 
-          z-[9999]
+          z-50
           transition-opacit
           ease-in
           duration-300`,

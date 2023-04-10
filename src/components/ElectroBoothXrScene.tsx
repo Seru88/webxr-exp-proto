@@ -34,11 +34,9 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { isMobile } from 'react-device-detect'
 
 import Dialog from './Dialog'
+import LoadingIndicator from './LoadingIndicator'
+import SplashOverlay from './SplashOverlay'
 
-// import bgm_src from 'assets/audio/booth_bgm.mp3'
-// import LoadingIndicator from './LoadingIndicator'
-// import SplashOverlay from './SplashOverlay'
-// import PoweredByPostReality from './PoweredByPostReality'
 let engine: Engine
 let scene: Scene
 let envHelper: EnvironmentHelper | null
@@ -57,7 +55,7 @@ const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
 const camFOV = 0.8
 const camInertia = 0.9
-const camRadius = 50
+const camRadius = 25
 const camMinZ = 1
 const camAlpha = Math.PI
 const camBeta = Math.PI / 2.5
@@ -72,7 +70,7 @@ const xrControllerConfig = {
 
 export const ElectroBoothXrScene = () => {
   const [started, setStarted] = useState(false)
-  // const [progress, setProgress] = useState(0)
+  const [progress, setProgress] = useState(0)
   const [showInstructions, setShowInstructions] = useState(false)
   const [isArMode, setIsArMode] = useState(false)
 
@@ -259,10 +257,10 @@ export const ElectroBoothXrScene = () => {
           hl.addExcludedMesh(model)
           setStarted(true)
         },
-        // xhr => {
-        //   setProgress((xhr.loaded / xhr.total) * 100)
-        // },
-        undefined,
+        xhr => {
+          setProgress((xhr.loaded / xhr.total) * 100)
+        },
+        // undefined,
         null,
         '.glb'
       )
@@ -427,9 +425,9 @@ export const ElectroBoothXrScene = () => {
 
   return (
     <>
-      {/* <SplashOverlay open={!started} variant='electro-booth'>
+      <SplashOverlay open={!started} variant='electro-booth'>
         <LoadingIndicator progress={progress} variant='electro-booth' />
-      </SplashOverlay> */}
+      </SplashOverlay>
       <Dialog open={showInstructions}>
         <div class='uppercase text-center py-3 text-lg'>Instructions</div>
         <hr />

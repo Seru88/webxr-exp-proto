@@ -30,10 +30,8 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { isMobile } from 'react-device-detect'
 
 import Dialog from './Dialog'
-
-// import LoadingIndicator from './LoadingIndicator'
-// import SplashOverlay from './SplashOverlay'
-// import PoweredByPostReality from './PoweredByPostReality'
+import LoadingIndicator from './LoadingIndicator'
+import SplashOverlay from './SplashOverlay'
 
 let engine: Engine
 let scene: Scene
@@ -50,7 +48,7 @@ const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
 const camFOV = 0.8
 const camInertia = 0.9
-const camRadius = 50
+const camRadius = 40
 const camMinZ = 1
 const camAlpha = Math.PI
 const camBeta = Math.PI / 2.5
@@ -65,7 +63,7 @@ const xrControllerConfig = {
 
 export const ElectroGlobeXrScene = () => {
   const [started, setStarted] = useState(false)
-  // const [progress, setProgress] = useState(0)
+  const [progress, setProgress] = useState(0)
   const [showInstructions, setShowInstructions] = useState(false)
   const [isArMode, setIsArMode] = useState(false)
 
@@ -205,10 +203,10 @@ export const ElectroGlobeXrScene = () => {
           hl.addExcludedMesh(model)
           setStarted(true)
         },
-        // xhr => {
-        //   setProgress((xhr.loaded / xhr.total) * 100)
-        // },
-        undefined,
+        xhr => {
+          setProgress((xhr.loaded / xhr.total) * 100)
+        },
+        // undefined,
         null,
         '.glb'
       )
@@ -372,9 +370,9 @@ export const ElectroGlobeXrScene = () => {
 
   return (
     <>
-      {/* <SplashOverlay open={!started} variant='electro-globe'>
+      <SplashOverlay open={!started} variant='electro-globe'>
         <LoadingIndicator progress={progress} variant='electro-globe' />
-      </SplashOverlay> */}
+      </SplashOverlay>
       <Dialog open={showInstructions}>
         <div class='uppercase text-center py-3 text-lg'>Instructions</div>
         <hr />

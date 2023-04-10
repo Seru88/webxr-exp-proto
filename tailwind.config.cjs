@@ -16,7 +16,7 @@ module.exports = {
         college: '#38BBF5',
         golf: '#D51900',
         'electro-booth': '#EA3212',
-        'electro-globe': '#515151'
+        'electro-globe': '#0091FF'
       },
       keyframes: {
         indeterminate: {

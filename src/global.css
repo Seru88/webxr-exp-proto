@@ -31,7 +31,7 @@
     @apply bg-electro-booth hover:bg-electro-booth font-medium border-none py-2 rounded-3xl text-xl shadow-none
   }
   .btn-electro-globe {
-    @apply bg-[#0091FF] hover:bg-[#0091FF] font-normal border-none py-2 rounded-lg text-lg normal-case shadow-none
+    @apply bg-electro-globe hover:bg-electro-globe font-normal border-none py-2 rounded-lg text-lg normal-case shadow-none
   }
 }
 
