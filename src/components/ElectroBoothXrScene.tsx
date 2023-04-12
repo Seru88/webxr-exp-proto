@@ -370,6 +370,7 @@ export const ElectroBoothXrScene = () => {
       canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
       rootNode.scaling = Vector3.One()
       rootNode.position = Vector3.Zero()
+      rootNode.rotation = Vector3.Zero()
       rootNode.setEnabled(true)
       envHelper?.skybox?.setEnabled(true)
       placeCursor.setEnabled(false)

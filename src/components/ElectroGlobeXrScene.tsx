@@ -292,7 +292,7 @@ export const ElectroGlobeXrScene = () => {
     if (canvas === null) return
     if (!isArMode) {
       scene.setActiveCameraById(arCam.id)
-      orbitCam.useAutoRotationBehavior = true
+      orbitCam.useAutoRotationBehavior = false
       orbitCam.detachControl()
       orbitCam.setEnabled(false)
       arCam.setEnabled(true)
@@ -312,7 +312,10 @@ export const ElectroGlobeXrScene = () => {
     } else {
       window.XR8.pause()
       scene.setActiveCameraById(orbitCam.id)
-      orbitCam.useAutoRotationBehavior = false
+      orbitCam.useAutoRotationBehavior = true
+      if (orbitCam.autoRotationBehavior) {
+        orbitCam.autoRotationBehavior.idleRotationSpeed = -0.05
+      }
       orbitCam.alpha = camAlpha
       orbitCam.beta = camBeta
       orbitCam.radius = camRadius
@@ -322,6 +325,7 @@ export const ElectroGlobeXrScene = () => {
       canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
       rootNode.scaling = Vector3.One()
       rootNode.position = Vector3.Zero()
+      rootNode.rotation = Vector3.Zero()
       rootNode.setEnabled(true)
       envHelper?.skybox?.setEnabled(true)
       placeCursor.setEnabled(false)
