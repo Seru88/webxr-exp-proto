@@ -123,9 +123,11 @@ export const ElectroBoothXrScene = () => {
     if (canvas) {
       engine = new Engine(canvas, true, {
         stencil: true,
-        preserveDrawingBuffer: true
+        preserveDrawingBuffer: true,
+        antialias: true
       })
       engine.enableOfflineSupport = false
+      engine.setHardwareScalingLevel(0.5)
       scene = new Scene(engine)
 
       const dirLight = new DirectionalLight(
@@ -407,7 +409,8 @@ export const ElectroBoothXrScene = () => {
     ])
     arCam.addBehavior(
       window.XR8.Babylonjs.xrCameraBehavior({
-        allowedDevices: window.XR8.XrConfig.device().ANY
+        allowedDevices: window.XR8.XrConfig.device().ANY,
+        cameraConfig: { direction: window.XR8.XrConfig.camera().BACK }
       }),
       true
     )

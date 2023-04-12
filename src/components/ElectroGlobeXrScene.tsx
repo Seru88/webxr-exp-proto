@@ -111,9 +111,11 @@ export const ElectroGlobeXrScene = () => {
     if (canvas) {
       engine = new Engine(canvas, true, {
         stencil: true,
-        preserveDrawingBuffer: true
+        preserveDrawingBuffer: true,
+        antialias: true
       })
       engine.enableOfflineSupport = false
+      engine.setHardwareScalingLevel(0.5)
       scene = new Scene(engine)
 
       const dirLight = new DirectionalLight(
@@ -193,7 +195,8 @@ export const ElectroGlobeXrScene = () => {
         model_src,
         '',
         scene,
-        meshes => {
+        (meshes, ps, skl, animGroups) => {
+          animGroups[0].stop()
           model = meshes[0] as Mesh
           model.rotation = new Vector3(0, 0, 0)
           model.parent = rootNode
@@ -201,6 +204,10 @@ export const ElectroGlobeXrScene = () => {
             mesh.isPickable = false
           }
           hl.addExcludedMesh(model)
+          orbitCam.useAutoRotationBehavior = true
+          if (orbitCam.autoRotationBehavior) {
+            orbitCam.autoRotationBehavior.idleRotationSpeed = -0.05
+          }
           setStarted(true)
         },
         xhr => {
@@ -285,6 +292,7 @@ export const ElectroGlobeXrScene = () => {
     if (canvas === null) return
     if (!isArMode) {
       scene.setActiveCameraById(arCam.id)
+      orbitCam.useAutoRotationBehavior = true
       orbitCam.detachControl()
       orbitCam.setEnabled(false)
       arCam.setEnabled(true)
@@ -304,6 +312,7 @@ export const ElectroGlobeXrScene = () => {
     } else {
       window.XR8.pause()
       scene.setActiveCameraById(orbitCam.id)
+      orbitCam.useAutoRotationBehavior = false
       orbitCam.alpha = camAlpha
       orbitCam.beta = camBeta
       orbitCam.radius = camRadius
@@ -352,7 +361,8 @@ export const ElectroGlobeXrScene = () => {
     ])
     arCam.addBehavior(
       window.XR8.Babylonjs.xrCameraBehavior({
-        allowedDevices: window.XR8.XrConfig.device().ANY
+        allowedDevices: window.XR8.XrConfig.device().ANY,
+        cameraConfig: { direction: window.XR8.XrConfig.camera().BACK }
       }),
       true
     )
