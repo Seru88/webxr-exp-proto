@@ -17,6 +17,7 @@ import {
   SceneLoader,
   StandardMaterial,
   Texture,
+  Tools,
   TransformNode,
   Vector3
 } from '@babylonjs/core'
@@ -44,7 +45,7 @@ let rootNode: TransformNode
 let model: Mesh
 // let animGroup: AnimationGroup
 const startScale = Vector3.Zero() // Initial scale value for our model
-const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
+const endScale = new Vector3(0.8, 0.8, 0.8) // Ending scale value for our model
 const animationMillis = 1250
 const camFOV = 0.8
 const camInertia = 0.9
@@ -162,6 +163,7 @@ export const ElectroGlobeXrScene = () => {
       surfaceMaterial.alpha = 0
       surface.material = surfaceMaterial
       surface.receiveShadows = true
+      // surface.setEnabled(false)
 
       const cursorTexture = new Texture(cursor_src, scene)
       cursorTexture.hasAlpha = true
@@ -198,7 +200,7 @@ export const ElectroGlobeXrScene = () => {
         (meshes, ps, skl, animGroups) => {
           animGroups[0].stop()
           model = meshes[0] as Mesh
-          model.rotation = new Vector3(0, 0, 0)
+          model.rotation = new Vector3(0, Tools.ToRadians(270), 0)
           model.parent = rootNode
           for (const mesh of meshes) {
             mesh.isPickable = false
@@ -301,13 +303,13 @@ export const ElectroGlobeXrScene = () => {
       } else {
         onxrloaded()
       }
+      removeMeshBehaviorRef.current = meshGestureBehavior(canvas, rootNode)
       rootNode.scaling.copyFrom(startScale)
       rootNode.position = Vector3.Zero()
       rootNode.setEnabled(false)
       envHelper?.skybox?.setEnabled(false)
       placeCursor.setEnabled(true)
       surface.isPickable = true
-      removeMeshBehaviorRef.current = meshGestureBehavior(canvas, rootNode)
       canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
     } else {
       window.XR8.pause()
@@ -323,6 +325,7 @@ export const ElectroGlobeXrScene = () => {
       orbitCam.attachControl()
       arCam.setEnabled(false)
       canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
+      if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
       rootNode.scaling = Vector3.One()
       rootNode.position = Vector3.Zero()
       rootNode.rotation = Vector3.Zero()
@@ -330,7 +333,6 @@ export const ElectroGlobeXrScene = () => {
       envHelper?.skybox?.setEnabled(true)
       placeCursor.setEnabled(false)
       surface.isPickable = false
-      if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
     }
     setIsArMode(!isArMode)
   }

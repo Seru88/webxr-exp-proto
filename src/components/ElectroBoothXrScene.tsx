@@ -350,13 +350,12 @@ export const ElectroBoothXrScene = () => {
       } else {
         onxrloaded()
       }
+      removeMeshBehaviorRef.current = meshGestureBehavior(canvas, rootNode)
       rootNode.scaling.copyFrom(startScale)
       rootNode.position = Vector3.Zero()
       rootNode.setEnabled(false)
       envHelper?.skybox?.setEnabled(false)
       placeCursor.setEnabled(true)
-      surface.isPickable = true
-      removeMeshBehaviorRef.current = meshGestureBehavior(canvas, rootNode)
       canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
     } else {
       window.XR8.pause()
@@ -368,14 +367,13 @@ export const ElectroBoothXrScene = () => {
       orbitCam.attachControl()
       arCam.setEnabled(false)
       canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
+      if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
       rootNode.scaling = Vector3.One()
       rootNode.position = Vector3.Zero()
       rootNode.rotation = Vector3.Zero()
       rootNode.setEnabled(true)
       envHelper?.skybox?.setEnabled(true)
       placeCursor.setEnabled(false)
-      surface.isPickable = false
-      if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
     }
     setIsArMode(!isArMode)
   }
