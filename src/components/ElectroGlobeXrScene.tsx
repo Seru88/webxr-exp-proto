@@ -367,7 +367,7 @@ export const ElectroGlobeXrScene = () => {
     ])
     arCam.addBehavior(
       window.XR8.Babylonjs.xrCameraBehavior({
-        allowedDevices: window.XR8.XrConfig.device().ANY,
+        allowedDevices: window.XR8.XrConfig.device().MOBILE,
         cameraConfig: { direction: window.XR8.XrConfig.camera().BACK }
       }),
       true

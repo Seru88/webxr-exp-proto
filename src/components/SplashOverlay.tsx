@@ -84,6 +84,7 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           items-center 
           z-50
           transition-opacit
+          overflow-y-scroll
           ease-in
           duration-300`,
           open ? 'opacity-100' : 'opacity-0'
@@ -96,7 +97,7 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
             'flex flex-col justify-center items-center py-2 max-w-screen-sm'
           )}
         >
-          <img class='scale-[1.03] mb-10' src={electro_logo_src} alt='' />
+          <img class='mb-10' src={electro_logo_src} alt='' />
           {variant === 'electro-booth' && (
             <div class='-mt-4 mb-4 font-bold text-2xl tracking-tight text-center'>
               Collaborative spaces to drive innovation and performance.
