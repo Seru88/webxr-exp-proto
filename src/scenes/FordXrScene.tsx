@@ -45,8 +45,8 @@ import SplashOverlay from 'components/SplashOverlay'
 import { FunctionalComponent } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
-import Dialog from './Dialog'
-import PoweredByPostReality from './PoweredByPostReality'
+import Dialog from 'components/Dialog'
+import PoweredByPostReality from 'components/PoweredByPostReality'
 
 import type { Mesh } from '@babylonjs/core/Meshes/mesh'
 const iOS = () => {

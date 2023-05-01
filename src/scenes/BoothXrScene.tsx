@@ -34,10 +34,10 @@ import starry_sky_video_src from 'assets/videos/starry_sky.mp4'
 import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
-import Dialog from './Dialog'
-import LoadingIndicator from './LoadingIndicator'
-import SplashOverlay from './SplashOverlay'
-import PoweredByPostReality from './PoweredByPostReality'
+import Dialog from 'components/Dialog'
+import LoadingIndicator from 'components/LoadingIndicator'
+import SplashOverlay from 'components/SplashOverlay'
+import PoweredByPostReality from 'components/PoweredByPostReality'
 import { isMobile } from 'react-device-detect'
 
 Effect.ShadersStore['basicVertexShader'] = `

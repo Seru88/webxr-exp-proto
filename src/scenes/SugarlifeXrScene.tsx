@@ -29,10 +29,10 @@ import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useState } from 'preact/hooks'
 import { isMobile } from 'react-device-detect'
 
-import Dialog from './Dialog'
-import LoadingIndicator from './LoadingIndicator'
-import PoweredByPostReality from './PoweredByPostReality'
-import SplashOverlay from './SplashOverlay'
+import Dialog from 'components/Dialog'
+import LoadingIndicator from 'components/LoadingIndicator'
+import PoweredByPostReality from 'components/PoweredByPostReality'
+import SplashOverlay from 'components/SplashOverlay'
 
 let engine: Engine
 let scene: Scene

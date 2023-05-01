@@ -35,10 +35,10 @@ import pink_vid_src from 'assets/videos/college_pink.mp4'
 import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useMemo, useState } from 'preact/hooks'
 
-import Dialog from './Dialog'
-import LoadingIndicator from './LoadingIndicator'
-import PoweredByPostReality from './PoweredByPostReality'
-import SplashOverlay from './SplashOverlay'
+import Dialog from 'components/Dialog'
+import LoadingIndicator from 'components/LoadingIndicator'
+import PoweredByPostReality from 'components/PoweredByPostReality'
+import SplashOverlay from 'components/SplashOverlay'
 import { isMobile } from 'react-device-detect'
 
 Effect.ShadersStore['basicVertexShader'] = `

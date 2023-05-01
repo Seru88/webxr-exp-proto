@@ -23,10 +23,10 @@ import golf_video_src from 'assets/videos/golf.mp4'
 import syncNodeWithImageTargetInfo from 'helpers/syncNodeWithImageTarget'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
-import Dialog from './Dialog'
-import LoadingIndicator from './LoadingIndicator'
-import PoweredByPostReality from './PoweredByPostReality'
-import SplashOverlay from './SplashOverlay'
+import Dialog from 'components/Dialog'
+import LoadingIndicator from 'components/LoadingIndicator'
+import PoweredByPostReality from 'components/PoweredByPostReality'
+import SplashOverlay from 'components/SplashOverlay'
 import { isMobile } from 'react-device-detect'
 
 let engine: Engine

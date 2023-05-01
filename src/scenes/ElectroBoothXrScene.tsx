@@ -1,6 +1,7 @@
 import '@babylonjs/loaders/glTF'
 
 import {
+  AbstractMesh,
   ArcRotateCamera,
   Color3,
   CubeTexture,
@@ -17,22 +18,24 @@ import {
   SceneLoader,
   StandardMaterial,
   Texture,
-  Tools,
   TransformNode,
-  Vector3
+  Vector3,
+  VideoTexture
 } from '@babylonjs/core'
-import model_src from 'assets/models/electro_globe_model.glb'
+import model_src from 'assets/models/electro_booth_model.glb'
 import cursor_src from 'assets/textures/electrosonic_cursor.png'
 import pinch_icon_src from 'assets/ui/pinch_icon.png'
 import surface_icon_src from 'assets/ui/surface_icon.png'
 import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
+import screen1_video_src from 'assets/videos/screen1_video.mp4'
+import screen2_video_src from 'assets/videos/screen2_video.mp4'
 import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { isMobile } from 'react-device-detect'
 
-import Dialog from './Dialog'
-import LoadingIndicator from './LoadingIndicator'
-import SplashOverlay from './SplashOverlay'
+import Dialog from 'components/Dialog'
+import LoadingIndicator from 'components/LoadingIndicator'
+import SplashOverlay from 'components/SplashOverlay'
 
 let engine: Engine
 let scene: Scene
@@ -43,13 +46,16 @@ let surface: Mesh
 let placeCursor: Mesh
 let rootNode: TransformNode
 let model: Mesh
+// let bgm: Sound
 // let animGroup: AnimationGroup
+let screen1VidTex: VideoTexture
+let screen2VidTex: VideoTexture
 const startScale = Vector3.Zero() // Initial scale value for our model
-const endScale = new Vector3(0.8, 0.8, 0.8) // Ending scale value for our model
+const endScale = new Vector3(1, 1, 1) // Ending scale value for our model
 const animationMillis = 1250
 const camFOV = 0.8
 const camInertia = 0.9
-const camRadius = 40
+const camRadius = 25
 const camMinZ = 1
 const camAlpha = Math.PI
 const camBeta = Math.PI / 2.5
@@ -62,7 +68,7 @@ const xrControllerConfig = {
   disableWorldTracking: !isMobile
 }
 
-export const ElectroGlobeXrScene = () => {
+export const ElectroBoothXrScene = () => {
   const [started, setStarted] = useState(false)
   const [progress, setProgress] = useState(0)
   const [showInstructions, setShowInstructions] = useState(false)
@@ -91,18 +97,23 @@ export const ElectroGlobeXrScene = () => {
         .to(endScale, animationMillis)
         .easing(window.TWEEN.Easing.Elastic.Out) // Use an easing function to make the animation smooth.
         .onStart(() => {
+          // setStoreBtnActive(true)
           placeCursor.setEnabled(false)
           rootNode.setEnabled(true)
+          screen1VidTex.video.loop = true
+          screen1VidTex.video.play()
+          screen2VidTex.video.loop = true
+          screen2VidTex.video.play()
         })
         .onUpdate(() => {
           rootNode.scaling.x = scale._x
           rootNode.scaling.y = scale._y
           rootNode.scaling.z = scale._z
         })
-        // .onComplete(() => {
-        //   // bgm.play()
-        //   // animGroup.play(true)
-        // })
+        .onComplete(() => {
+          // bgm.play()
+          // animGroup.play(true)
+        })
         .start() // Start the tween immediately.
     }
   }
@@ -163,7 +174,6 @@ export const ElectroGlobeXrScene = () => {
       surfaceMaterial.alpha = 0
       surface.material = surfaceMaterial
       surface.receiveShadows = true
-      // surface.setEnabled(false)
 
       const cursorTexture = new Texture(cursor_src, scene)
       cursorTexture.hasAlpha = true
@@ -190,6 +200,25 @@ export const ElectroGlobeXrScene = () => {
       hl.blurHorizontalSize = 3
       hl.blurVerticalSize = 3
 
+      screen1VidTex = new VideoTexture(
+        'screen1-vid',
+        screen1_video_src,
+        scene,
+        undefined,
+        true,
+        undefined,
+        { loop: true, autoPlay: true, muted: true }
+      )
+      screen2VidTex = new VideoTexture(
+        'screen2-vid',
+        screen2_video_src,
+        scene,
+        undefined,
+        true,
+        undefined,
+        { loop: true, autoPlay: true, muted: true }
+      )
+
       rootNode = new TransformNode('root-node', scene)
 
       SceneLoader.ImportMesh(
@@ -197,19 +226,37 @@ export const ElectroGlobeXrScene = () => {
         model_src,
         '',
         scene,
-        (meshes, ps, skl, animGroups) => {
-          animGroups[0].stop()
+        meshes => {
+          let screen1: AbstractMesh | undefined
+          let screen2: AbstractMesh | undefined
+
+          // animGroup = animationsGroup[0]
+          // animGroup.stop()
+
           model = meshes[0] as Mesh
-          model.rotation = new Vector3(0, Tools.ToRadians(270), 0)
+          model.rotation = new Vector3(0, 0, 0)
           model.parent = rootNode
           for (const mesh of meshes) {
             mesh.isPickable = false
+            if (mesh.name === 'Screen1') screen1 = mesh
+            else if (mesh.name === 'Screen2') screen2 = mesh
+          }
+
+          if (screen1) {
+            const mat = screen1.material as PBRMaterial
+            mat.albedoTexture = screen1VidTex
+            mat.emissiveTexture = screen1VidTex
+            mat.emissiveColor = Color3.White()
+            screen1.material = mat
+          }
+          if (screen2) {
+            const mat = screen2.material as PBRMaterial
+            mat.albedoTexture = screen2VidTex
+            mat.emissiveTexture = screen2VidTex
+            mat.emissiveColor = Color3.White()
+            screen2.material = mat
           }
           hl.addExcludedMesh(model)
-          orbitCam.useAutoRotationBehavior = true
-          if (orbitCam.autoRotationBehavior) {
-            orbitCam.autoRotationBehavior.idleRotationSpeed = -0.05
-          }
           setStarted(true)
         },
         xhr => {
@@ -251,6 +298,7 @@ export const ElectroGlobeXrScene = () => {
         envHelper.skybox.material = skyBoxMaterial
         envHelper.skybox.infiniteDistance = true
         envHelper.skybox.isPickable = false
+        hl.addExcludedMesh(envHelper.skybox)
       }
 
       scene.registerBeforeRender(() => {
@@ -294,7 +342,6 @@ export const ElectroGlobeXrScene = () => {
     if (canvas === null) return
     if (!isArMode) {
       scene.setActiveCameraById(arCam.id)
-      orbitCam.useAutoRotationBehavior = false
       orbitCam.detachControl()
       orbitCam.setEnabled(false)
       arCam.setEnabled(true)
@@ -309,15 +356,10 @@ export const ElectroGlobeXrScene = () => {
       rootNode.setEnabled(false)
       envHelper?.skybox?.setEnabled(false)
       placeCursor.setEnabled(true)
-      surface.isPickable = true
       canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
     } else {
       window.XR8.pause()
       scene.setActiveCameraById(orbitCam.id)
-      orbitCam.useAutoRotationBehavior = true
-      if (orbitCam.autoRotationBehavior) {
-        orbitCam.autoRotationBehavior.idleRotationSpeed = -0.05
-      }
       orbitCam.alpha = camAlpha
       orbitCam.beta = camBeta
       orbitCam.radius = camRadius
@@ -332,7 +374,6 @@ export const ElectroGlobeXrScene = () => {
       rootNode.setEnabled(true)
       envHelper?.skybox?.setEnabled(true)
       placeCursor.setEnabled(false)
-      surface.isPickable = false
     }
     setIsArMode(!isArMode)
   }
@@ -386,8 +427,8 @@ export const ElectroGlobeXrScene = () => {
 
   return (
     <>
-      <SplashOverlay open={!started} variant='electro-globe'>
-        <LoadingIndicator progress={progress} variant='electro-globe' />
+      <SplashOverlay open={!started} variant='electro-booth'>
+        <LoadingIndicator progress={progress} variant='electro-booth' />
       </SplashOverlay>
       <Dialog open={showInstructions}>
         <div class='uppercase text-center py-3 text-lg'>Instructions</div>
@@ -428,7 +469,7 @@ export const ElectroGlobeXrScene = () => {
       </button> */}
       {started && (
         <button
-          class='btn btn-electro-globe absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
+          class='btn btn-electro-booth absolute top-2 right-2 p-0 rounded-full lowercase text-lg text-center w-10 h-10 font-serif italic'
           onClick={() => setShowInstructions(true)}
         >
           i
@@ -436,7 +477,7 @@ export const ElectroGlobeXrScene = () => {
       )}
       {started && (
         <button
-          class='btn btn-electro-globe absolute bottom-10 left-1/2 -translate-x-1/2'
+          class='btn btn-electro-booth absolute bottom-10 left-1/2 -translate-x-1/2'
           onClick={toggleArMode}
         >
           {isArMode ? 'View in 3D' : 'View in AR'}
