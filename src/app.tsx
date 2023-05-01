@@ -6,7 +6,7 @@ import Home from 'routes/Home'
 
 export function App() {
   return (
-    <div class='h-[100dvh]'>
+    <div>
       <Router>
         <Home path='/' />
         <AsyncRoute

@@ -75,7 +75,6 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           bg-center
           bg-no-repeat
           bg-cover
-          fixed
           w-screen
           h-full
           flex
@@ -83,43 +82,45 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           justify-center
           items-center 
           z-50
-          transition-opacit
+          transition-opacity
           overflow-y-scroll
           ease-in
           duration-300`,
-          open ? 'opacity-100' : 'opacity-0'
+          open ? 'opacity-100' : 'opacity-0',
+          variant === 'electro-booth' ? 'p-4' : 'p-6'
         )}
         style={{ backgroundImage: `url(${bgImageSrc})` }}
       >
-        <div
+        <img class='mb-10' src={electro_logo_src} alt='' />
+        {variant === 'electro-booth' && (
+          <div class='-mt-4 mb-4 font-bold text-2xl tracking-tight text-center'>
+            Collaborative spaces to drive innovation and performance.
+          </div>
+        )}
+        <img
+          class='rounded-xl mb-6'
+          src={
+            variant === 'electro-booth'
+              ? electro_booth_thumb_src
+              : electro_globe_thumb_src
+          }
+          alt=''
+        />
+        {variant === 'electro-globe' && (
+          <div class='mt-4 mb-10 font-semibold text-4xl text-[#515151] leading-tight tracking-[0.0125em]'>
+            Create a lasting impression with inspirational branded lobbies and
+            courtyards.
+          </div>
+        )}
+        {children}
+        {/* <div
           className={clsx(
             variant === 'electro-booth' ? 'px-4' : 'px-6',
             'flex flex-col justify-center items-center py-2 max-w-screen-sm'
           )}
         >
-          <img class='mb-10' src={electro_logo_src} alt='' />
-          {variant === 'electro-booth' && (
-            <div class='-mt-4 mb-4 font-bold text-2xl tracking-tight text-center'>
-              Collaborative spaces to drive innovation and performance.
-            </div>
-          )}
-          <img
-            class='rounded-xl mb-6'
-            src={
-              variant === 'electro-booth'
-                ? electro_booth_thumb_src
-                : electro_globe_thumb_src
-            }
-            alt=''
-          />
-          {variant === 'electro-globe' && (
-            <div class='mt-4 mb-10 font-semibold text-4xl text-[#515151] leading-tight tracking-[0.0125em]'>
-              Create a lasting impression with inspirational branded lobbies and
-              courtyards.
-            </div>
-          )}
-          {children}
-        </div>
+          
+        </div> */}
       </div>
     )
   }
