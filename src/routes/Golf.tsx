@@ -1,5 +1,5 @@
 import BackToGalleryLink from 'components/BackToGalleryLink'
-import { GolfXrScene } from 'components/GolfXrScene'
+import { GolfXrScene } from 'scenes/GolfXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
 import { FunctionalComponent } from 'preact'

@@ -1,5 +1,5 @@
 // import BackToGalleryLink from 'components/BackToGalleryLink'
-import { ElectroGlobeXrScene } from 'components/ElectroGlobeXrScene'
+import { ElectroGlobeXrScene } from 'scenes/ElectroGlobeXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
 import { FunctionalComponent } from 'preact'

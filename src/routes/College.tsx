@@ -1,5 +1,5 @@
 import BackToGalleryLink from 'components/BackToGalleryLink'
-import { CollegeXrScene } from 'components/CollegeXrScene'
+import { CollegeXrScene } from 'scenes/CollegeXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
 import { FunctionalComponent } from 'preact'

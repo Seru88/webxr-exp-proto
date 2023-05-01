@@ -1,5 +1,5 @@
 import BackToGalleryLink from 'components/BackToGalleryLink'
-import FordXrScene from 'components/FordXrScene'
+import FordXrScene from 'scenes/FordXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
 import { FunctionalComponent } from 'preact'

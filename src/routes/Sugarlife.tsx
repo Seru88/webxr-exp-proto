@@ -1,7 +1,7 @@
 import BackToGalleryLink from 'components/BackToGalleryLink'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
-import { SugarlifeXrScene } from 'components/SugarlifeXrScene'
+import { SugarlifeXrScene } from 'scenes/SugarlifeXrScene'
 import { FunctionalComponent } from 'preact'
 import { RoutableProps } from 'preact-router'
 import { useState } from 'preact/hooks'

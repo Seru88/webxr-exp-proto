@@ -1,5 +1,5 @@
 import BackToGalleryLink from 'components/BackToGalleryLink'
-import { BrochureXrScene } from 'components/BrochureXrScene'
+import { BrochureXrScene } from 'scenes/BrochureXrScene'
 import SplashOverlay from 'components/SplashOverlay'
 import StartButton from 'components/StartButton'
 import { FunctionalComponent } from 'preact'
