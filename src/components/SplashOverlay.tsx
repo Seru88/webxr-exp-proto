@@ -75,23 +75,20 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           bg-center
           bg-no-repeat
           bg-cover
-          w-screen
-          h-full
           flex
           flex-col
-          justify-center
-          items-center 
-          z-50
+          space-y-10
+          z-[9999]
           transition-opacity
-          overflow-y-scroll
           ease-in
+          min-h-[100dvh]
           duration-300`,
           open ? 'opacity-100' : 'opacity-0',
           variant === 'electro-booth' ? 'p-4' : 'p-6'
         )}
         style={{ backgroundImage: `url(${bgImageSrc})` }}
       >
-        <img class='mb-10' src={electro_logo_src} alt='' />
+        <img src={electro_logo_src} alt='' />
         {variant === 'electro-booth' && (
           <div class='-mt-4 mb-4 font-bold text-2xl tracking-tight text-center'>
             Collaborative spaces to drive innovation and performance.
@@ -125,6 +122,7 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
     )
   }
 
+  //todo: Refactor so that it doesn't rely on fixed position
   return (
     <div
       ref={divRef}
@@ -139,7 +137,7 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
         flex
         flex-col
         z-[9999]
-        transition-opacit
+        transition-opacity
         ease-in
         duration-300`,
         open ? 'opacity-100' : 'opacity-0'

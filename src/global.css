@@ -4,39 +4,40 @@
 
 @layer components {
   .btn {
-    @apply py-0 px-6 rounded-md text-white uppercase text-2xl font-bold border-2 transition-colors shadow-lg border-white hover:bg-white
+    @apply py-0 px-6 rounded-md text-white uppercase text-2xl font-bold border-2 transition-colors shadow-lg border-white hover:bg-white;
   }
   .btn-billboard {
-    @apply bg-billboard hover:text-billboard
+    @apply bg-billboard hover:text-billboard;
   }
   .btn-booth {
-    @apply bg-booth hover:text-booth 
+    @apply bg-booth hover:text-booth;
   }
   .btn-brochure {
-    @apply bg-brochure hover:text-brochure 
+    @apply bg-brochure hover:text-brochure;
   }
   .btn-candy {
-    @apply bg-candy hover:text-candy
+    @apply bg-candy hover:text-candy;
   }
   .btn-car {
-    @apply bg-car hover:text-car
+    @apply bg-car hover:text-car;
   }
   .btn-college {
-    @apply bg-college hover:text-college
+    @apply bg-college hover:text-college;
   }
   .btn-golf {
-    @apply bg-golf hover:bg-golf
+    @apply bg-golf hover:bg-golf;
   }
   .btn-electro-booth {
-    @apply bg-electro-booth hover:bg-electro-booth font-medium border-none py-2 rounded-3xl text-xl shadow-none
+    @apply bg-electro-booth hover:bg-electro-booth font-medium border-none py-2 rounded-3xl text-xl shadow-none;
   }
   .btn-electro-globe {
-    @apply bg-electro-globe hover:bg-electro-globe font-normal border-none py-2 rounded-lg text-lg normal-case shadow-none
+    @apply bg-electro-globe hover:bg-electro-globe font-normal border-none py-2 rounded-lg text-lg normal-case shadow-none;
   }
 }
 
-html, body {
-  @apply bg-neutral-50
+html,
+body {
+  @apply bg-neutral-50;
 }
 
 /*#requestingCameraPermissions {
