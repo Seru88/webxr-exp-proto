@@ -8,3 +8,4 @@ export type ThemeVariant =
   | 'golf'
   | 'electro-booth'
   | 'electro-globe'
+  | 'liver'

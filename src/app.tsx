@@ -108,6 +108,18 @@ export function App() {
             </SplashOverlay>
           )}
         />
+        <AsyncRoute
+          path='/liver'
+          getComponent={() =>
+            import('routes/Liver').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='liver'>
+              {/* <div class='text-white text-3xl'>Liver</div> */}
+              <LoadingIndicator variant='liver' showText={false} />
+            </SplashOverlay>
+          )}
+        />
       </Router>
     </div>
   )

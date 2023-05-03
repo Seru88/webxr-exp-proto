@@ -33,6 +33,9 @@
   .btn-electro-globe {
     @apply bg-electro-globe hover:bg-electro-globe font-normal border-none py-2 rounded-lg text-lg normal-case shadow-none;
   }
+  .btn-liver {
+    @apply bg-liver hover:bg-liver font-normal text-xl shadow-none normal-case;
+  }
 }
 
 html,

@@ -4,9 +4,14 @@ import { useEffect, useRef } from 'preact/hooks'
 
 type DialogProps = {
   open: boolean
+  className?: string
 }
 
-const Dialog: FunctionalComponent<DialogProps> = ({ open, children }) => {
+const Dialog: FunctionalComponent<DialogProps> = ({
+  open,
+  className,
+  children
+}) => {
   const divRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -42,7 +47,9 @@ const Dialog: FunctionalComponent<DialogProps> = ({ open, children }) => {
         open ? 'opacity-100' : 'opacity-0'
       )}
     >
-      <div class='max-w-[295] rounded-lg shadow-lg bg-white'>{children}</div>
+      <div class={clsx('max-w-[295] rounded-lg shadow-lg bg-white', className)}>
+        {children}
+      </div>
     </div>
   )
 }

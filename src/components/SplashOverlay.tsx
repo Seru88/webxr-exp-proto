@@ -50,6 +50,8 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
         return electro_booth_bg_src
       case 'electro-globe':
         return electro_globe_bg_src
+      default:
+        return ''
     }
   }, [variant])
 
@@ -66,6 +68,30 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
     }
   }, [open])
 
+  if (variant === 'liver') {
+    return (
+      <div
+        ref={divRef}
+        class={clsx(
+          `bg-liver
+          flex
+          flex-col
+          justify-center
+          items-center
+          z-50
+          transition-opacity
+          ease-in
+          min-h-[100dvh]
+          duration-300`,
+          open ? 'opacity-100' : 'opacity-0'
+        )}
+        style={{ backgroundImage: `url(${bgImageSrc})` }}
+      >
+        {children}
+      </div>
+    )
+  }
+
   if (variant === 'electro-booth' || variant === 'electro-globe') {
     return (
       <div
@@ -78,7 +104,7 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           flex
           flex-col
           space-y-10
-          z-[9999]
+          z-50
           transition-opacity
           ease-in
           min-h-[100dvh]
@@ -131,9 +157,8 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
         bg-center
         bg-no-repeat
         bg-cover
-        fixed
-        w-screen
-        h-full
+        w-full
+        h-[100dvh]
         flex
         flex-col
         z-[9999]

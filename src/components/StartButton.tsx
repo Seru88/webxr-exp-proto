@@ -23,7 +23,8 @@ const StartButton: FunctionalComponent<StartButtonProps> = ({
         variant === 'college' && 'btn btn-college',
         variant === 'golf' && 'btn btn-golf',
         variant === 'electro-booth' && 'btn btn-electro-booth',
-        variant === 'electro-globe' && 'btn btn-electro-globe'
+        variant === 'electro-globe' && 'btn btn-electro-globe',
+        variant === 'liver' && 'btn btn-liver'
       )}
       {...rest}
     >
