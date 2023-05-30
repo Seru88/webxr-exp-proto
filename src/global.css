@@ -36,6 +36,9 @@
   .btn-liver {
     @apply bg-liver hover:bg-liver font-normal text-xl shadow-none normal-case;
   }
+  .btn-softsoap {
+    @apply bg-white text-softsoap-primary text-lg;
+  }
 }
 
 html,

@@ -32,6 +32,7 @@ const LoadingIndicator: FunctionalComponent<LoadingIndicatorProps> = ({
           variant === 'electro-globe' && 'text-electro-globe',
           variant === 'electro-booth' && 'text-electro-booth',
           variant === 'liver' && 'text-white',
+          variant === 'softsoap' && 'text-softsoap-primary',
           'text-lg',
           'uppercase',
           'font-semibold'

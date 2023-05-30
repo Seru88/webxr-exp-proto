@@ -115,8 +115,18 @@ export function App() {
           }
           loading={() => (
             <SplashOverlay open variant='liver'>
-              {/* <div class='text-white text-3xl'>Liver</div> */}
               <LoadingIndicator variant='liver' showText={false} />
+            </SplashOverlay>
+          )}
+        />
+        <AsyncRoute
+          path='/softsoap'
+          getComponent={() =>
+            import('routes/Softsoap').then(module => module.default)
+          }
+          loading={() => (
+            <SplashOverlay open variant='softsoap'>
+              <LoadingIndicator variant='softsoap' showText={false} />
             </SplashOverlay>
           )}
         />

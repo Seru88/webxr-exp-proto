@@ -22,7 +22,8 @@ const ProgressBar: FC<ProgressBarProps> = ({ variant, value }) => {
         variant === 'golf' && 'bg-golf',
         variant === 'electro-globe' && 'bg-electro-globe',
         variant === 'electro-booth' && 'bg-electro-booth',
-        variant === 'liver' && 'bg-liver'
+        variant === 'liver' && 'bg-liver',
+        variant === 'softsoap' && 'bg-softsoap-primary'
       )}
     >
       <div

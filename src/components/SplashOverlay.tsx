@@ -15,6 +15,9 @@ import electro_booth_bg_src from 'assets/ui/electro_booth_bg.jpg'
 import electro_globe_thumb_src from 'assets/ui/electro_globe_thumb.jpg'
 import electro_booth_thumb_src from 'assets/ui/electro_booth_thumb.jpg'
 import electro_logo_src from 'assets/ui/electro_logo.png'
+import softsoap_bg_src from 'assets/ui/softsoap/softsoap_bg.jpg'
+import softsoap_splash_scroll_src from 'assets/ui/softsoap/splash_scroll.png'
+import softsoap_logo_src from 'assets/ui/softsoap/softsoap_logo.png'
 
 import { ThemeVariant } from 'types/themeVariant'
 
@@ -50,6 +53,8 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
         return electro_booth_bg_src
       case 'electro-globe':
         return electro_globe_bg_src
+      case 'softsoap':
+        return softsoap_bg_src
       default:
         return ''
     }
@@ -67,6 +72,56 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
       }
     }
   }, [open])
+
+  if (variant === 'softsoap') {
+    return (
+      <div
+        ref={divRef}
+        class={clsx(
+          `
+          bg-center
+          bg-no-repeat
+          bg-cover
+          w-full
+          h-[100dvh]
+          grid 
+          grid-rows-6
+          gap-12
+          z-[9999]
+          transition-opacity
+          ease-in
+          duration-300
+          p-8
+        `,
+          open ? 'opacity-100' : 'opacity-0'
+        )}
+        style={{ backgroundImage: `url(${bgImageSrc})` }}
+      >
+        <div class='row-span-1 flex items-center justify-center'>
+          <img class='h-full w-auto' src={softsoap_logo_src} alt='' />
+        </div>
+        <div class='row-span-4 flex items-center justify-center'>
+          <img class='h-full w-auto' src={softsoap_splash_scroll_src} alt='' />
+        </div>
+        <div class='row-span-1 flex items-center justify-center'>
+          {children}
+        </div>
+        {/* <div class='row-span-1 flex items-center justify-center'>
+          <PoweredByPostReality />
+        </div> */}
+        {/* <div class='basis-2/12 flex flex-col justify-center items-center'></div>
+        <div class='basis-7/12 flex flex-col justify-center items-center'>
+          <img class='h-full block' src={softsoap_splash_scroll_src} alt='' />
+        </div>
+        <div class='basis-2/12 flex flex-col justify-center items-center'>
+          {children}
+        </div>
+        <div class='basis-1/12 flex flex-col justify-center items-center'>
+          <PoweredByPostReality />
+        </div> */}
+      </div>
+    )
+  }
 
   if (variant === 'liver') {
     return (
@@ -136,19 +191,10 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           </div>
         )}
         {children}
-        {/* <div
-          className={clsx(
-            variant === 'electro-booth' ? 'px-4' : 'px-6',
-            'flex flex-col justify-center items-center py-2 max-w-screen-sm'
-          )}
-        >
-          
-        </div> */}
       </div>
     )
   }
 
-  //todo: Refactor so that it doesn't rely on fixed position
   return (
     <div
       ref={divRef}

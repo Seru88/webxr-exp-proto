@@ -9,3 +9,4 @@ export type ThemeVariant =
   | 'electro-booth'
   | 'electro-globe'
   | 'liver'
+  | 'softsoap'

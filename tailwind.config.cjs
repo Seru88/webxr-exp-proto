@@ -17,7 +17,9 @@ module.exports = {
         golf: '#D51900',
         'electro-booth': '#EA3212',
         'electro-globe': '#0091FF',
-        liver: '#45CCAD'
+        liver: '#45CCAD',
+        'softsoap-primary': '#14368F',
+        'softsoap-secondary': '#1A3890'
       },
       keyframes: {
         indeterminate: {
