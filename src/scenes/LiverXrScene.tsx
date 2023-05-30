@@ -18,6 +18,7 @@ import {
   MeshBuilder,
   PBRMaterial,
   Scene,
+  ShadowGenerator,
   StandardMaterial,
   Texture,
   TransformNode,
@@ -42,6 +43,7 @@ import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { ChangeEvent } from 'preact/compat'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { isMobile } from 'react-device-detect'
+import { ShadowOnlyMaterial } from '@babylonjs/materials'
 
 const livers = [
   {
@@ -211,7 +213,7 @@ export const LiverXrScene = () => {
 
       const dirLight = new DirectionalLight(
         'DirectionalLight',
-        new Vector3(-5, -10, 7),
+        new Vector3(0, 1, 0),
         scene
       )
       dirLight.intensity = 0.7
@@ -246,11 +248,12 @@ export const LiverXrScene = () => {
 
       // Create surface mesh
       surface = MeshBuilder.CreateGround('ground', {
-        width: 150,
-        height: 150
+        width: 1000,
+        height: 1000
       })
-      const surfaceMaterial = new StandardMaterial('groundMaterial', scene)
-      surfaceMaterial.alpha = 0
+      const surfaceMaterial = new ShadowOnlyMaterial('groundMaterial', scene)
+      // surfaceMaterial.diffuseColor = Color3.Red()
+      // surfaceMaterial.shadowColor = Color3.Red()
       surface.material = surfaceMaterial
       surface.receiveShadows = true
 
@@ -279,6 +282,11 @@ export const LiverXrScene = () => {
       hl.blurHorizontalSize = 3
       hl.blurVerticalSize = 3
 
+      const shadowGenerator = new ShadowGenerator(1024, dirLight)
+      shadowGenerator.useBlurExponentialShadowMap = true
+      shadowGenerator.blurScale = 2
+      shadowGenerator.setDarkness(0.7)
+
       rootNode = new TransformNode('root-node', scene)
       liversNode = new TransformNode('livers-node', scene)
       liversNode.position = targetPos
@@ -300,12 +308,15 @@ export const LiverXrScene = () => {
           rootMesh.name = task.name
           rootMesh.setEnabled(task.name.includes('Healthy'))
           if (task.name !== 'spawn-disc') {
+            shadowGenerator.addShadowCaster(rootMesh, true)
             rootMesh.normalizeToUnitCube()
             rootMesh.parent = liversNode
+
             // rootMesh.position = targetPos
           } else {
             spawnDiscAnimGrps = task.loadedAnimationGroups
             spawnDiscAnimGrps[0].stop()
+            rootMesh.position.y = -0.1
             rootMesh.parent = rootNode
             spawnDisc = rootMesh
           }
@@ -435,6 +446,7 @@ export const LiverXrScene = () => {
       if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
       rootNode.position = Vector3.Zero()
       rootNode.rotation = Vector3.Zero()
+      rootNode.scaling = Vector3.One()
       liversNode.scaling = Vector3.One()
       liversNode.setEnabled(true)
       envHelper?.skybox?.setEnabled(true)
