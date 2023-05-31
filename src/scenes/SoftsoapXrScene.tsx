@@ -1,78 +1,76 @@
 import '@babylonjs/loaders/glTF'
 
 import {
-  ArcRotateCamera,
+  AssetsManager,
   BoundingBoxGizmo,
   Color3,
-  CubeTexture,
   DirectionalLight,
   Engine,
-  EnvironmentHelper,
   FreeCamera,
   HemisphericLight,
   HighlightLayer,
   Mesh,
+  MeshAssetTask,
   MeshBuilder,
-  PBRMaterial,
   Scene,
-  SceneLoader,
   StandardMaterial,
   Texture,
   Tools,
   TransformNode,
   Vector3
 } from '@babylonjs/core'
-import globe1_model_src from 'assets/models/softsoap/Globe1.glb'
-// import globe2_model_src from 'assets/models/softsoap/Globe2.glb'
+import red_globe_model_src from 'assets/models/softsoap/Globe1.glb'
+import blue_globe_model_src from 'assets/models/softsoap/Globe2.glb'
 import cursor_src from 'assets/textures/softsoap_cursor.png'
-// import pinch_icon_src from 'assets/ui/pinch_icon.png'
-// import surface_icon_src from 'assets/ui/surface_icon.png'
-// import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
 import instructions_src from 'assets/ui/softsoap/softsoap_instructions.png'
+import Dialog from 'components/Dialog'
+import LoadingIndicator from 'components/LoadingIndicator'
+import SplashOverlay from 'components/SplashOverlay'
 import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { isMobile } from 'react-device-detect'
 
-import Dialog from 'components/Dialog'
-import LoadingIndicator from 'components/LoadingIndicator'
-import SplashOverlay from 'components/SplashOverlay'
-
+// import pinch_icon_src from 'assets/ui/pinch_icon.png'
+// import surface_icon_src from 'assets/ui/surface_icon.png'
+// import tap_place_icon_src from 'assets/ui/taptoplace_icon.png'
 let engine: Engine
 let scene: Scene
-let envHelper: EnvironmentHelper | null
-let orbitCam: ArcRotateCamera
+// let envHelper: EnvironmentHelper | null
+// let orbitCam: ArcRotateCamera
 let arCam: FreeCamera
 let surface: Mesh
 let placeCursor: Mesh
 let rootNode: TransformNode
-let model: Mesh
+let redGlobeBB: Mesh
+let blueGlobeBB: Mesh
 // let animGroup: AnimationGroup
 const startScale = Vector3.Zero() // Initial scale value for our model
 const endScale = new Vector3(0.8, 0.8, 0.8) // Ending scale value for our model
 const animationMillis = 1250
-const camFOV = 0.8
-const camInertia = 0.9
-const camRadius = 5
-const camMinZ = 1
-const camAlpha = Math.PI
-const camBeta = Math.PI / 2.5
-const camLowerRadius = 5
-const camUpperRadius = 50
-const camWheelDeltaPercentage = 0.01
-const camWheelPrecision = 50
+// const camFOV = 0.8
+// const camInertia = 0.9
+// const camRadius = 5
+// const camMinZ = 1
+// const camAlpha = Math.PI
+// const camBeta = Math.PI / 2.5
+// const camLowerRadius = 5
+// const camUpperRadius = 50
+// const camWheelDeltaPercentage = 0.01
+// const camWheelPrecision = 50
 const xrControllerConfig = {
   enableLighting: true,
-  disableWorldTracking: !isMobile
+  disableWorldTracking: !isMobile,
+  imageTargets: ['Red_Globe', 'Blue_Globe']
 }
 
 export const SoftsoapXrScene = () => {
   const [started, setStarted] = useState(false)
   const [progress, setProgress] = useState(0)
   const [showInstructions, setShowInstructions] = useState(false)
-  const [isArMode, setIsArMode] = useState(false)
+  // const [isArMode, setIsArMode] = useState(false)
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const removeMeshBehaviorRef = useRef<() => void>()
+  // const removeMeshBehaviorRef = useRef<() => void>()
 
   const placeObjectTouchHandler = (e: TouchEvent) => {
     // Reset AR Camera on two finger tap.
@@ -136,22 +134,22 @@ export const SoftsoapXrScene = () => {
       )
       ambientLight.intensity = 1
 
-      orbitCam = new ArcRotateCamera(
-        'mainCam',
-        camAlpha,
-        camBeta,
-        camRadius,
-        Vector3.Zero(),
-        scene
-      )
-      orbitCam.inertia = camInertia
-      orbitCam.fov = camFOV
-      orbitCam.minZ = camMinZ
-      orbitCam.lowerRadiusLimit = camLowerRadius
-      orbitCam.upperRadiusLimit = camUpperRadius
-      orbitCam.wheelDeltaPercentage = camWheelDeltaPercentage
-      orbitCam.wheelPrecision = camWheelPrecision
-      orbitCam.attachControl(canvas, true)
+      // orbitCam = new ArcRotateCamera(
+      //   'mainCam',
+      //   camAlpha,
+      //   camBeta,
+      //   camRadius,
+      //   Vector3.Zero(),
+      //   scene
+      // )
+      // orbitCam.inertia = camInertia
+      // orbitCam.fov = camFOV
+      // orbitCam.minZ = camMinZ
+      // orbitCam.lowerRadiusLimit = camLowerRadius
+      // orbitCam.upperRadiusLimit = camUpperRadius
+      // orbitCam.wheelDeltaPercentage = camWheelDeltaPercentage
+      // orbitCam.wheelPrecision = camWheelPrecision
+      // orbitCam.attachControl(canvas, true)
 
       arCam = new FreeCamera('arCam', new Vector3(0, 0, 0), scene)
       arCam.position = new Vector3(0, 3, 0)
@@ -194,73 +192,118 @@ export const SoftsoapXrScene = () => {
       hl.blurVerticalSize = 3
 
       rootNode = new TransformNode('root-node', scene)
+      rootNode.setEnabled(false)
 
-      SceneLoader.ImportMesh(
-        '',
-        globe1_model_src,
-        '',
-        scene,
-        meshes => {
-          model = BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(
-            meshes[0] as Mesh
-          )
-          model.rotation = new Vector3(0, Tools.ToRadians(270), 0)
-          model.parent = rootNode
-          // for (const mesh of meshes) {
-          //   mesh.isPickable = false
-          // }
-          hl.addExcludedMesh(model)
-          orbitCam.useAutoRotationBehavior = true
-          if (orbitCam.autoRotationBehavior) {
-            orbitCam.autoRotationBehavior.idleRotationSpeed = -0.05
+      const assetMgr = new AssetsManager(scene)
+      assetMgr.useDefaultLoadingScreen = false
+      assetMgr.addMeshTask('red_globe', '', red_globe_model_src, '')
+      assetMgr.addMeshTask('blue_globe', '', blue_globe_model_src, '')
+
+      assetMgr.onTaskSuccess = task => {
+        if (task instanceof MeshAssetTask) {
+          if (task.name === 'red_globe') {
+            redGlobeBB = BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(
+              task.loadedMeshes[0] as Mesh
+            )
+            redGlobeBB.rotation = new Vector3(0, Tools.ToRadians(270), 0)
+            redGlobeBB.parent = rootNode
+            hl.addExcludedMesh(redGlobeBB)
+            redGlobeBB.setEnabled(false)
           }
-
-          orbitCam.setTarget(
-            new Vector3(model.position.x, model.scaling.y / 2, model.position.z)
-          )
-
-          setStarted(true)
-        },
-        xhr => {
-          setProgress((xhr.loaded / xhr.total) * 100)
-        },
-        // undefined,
-        null,
-        '.glb'
-      )
-
-      /**
-       * Environment texture for 3d preview/skybox.
-       */
-      const hdrTexture = CubeTexture.CreateFromPrefilteredData(
-        'https://assets.babylonjs.com/environments/environmentSpecular.env',
-        scene
-      )
-      hdrTexture.coordinatesMode = Texture.CUBIC_MODE
-      hdrTexture.updateSamplingMode(Texture.LINEAR_LINEAR)
-
-      /**
-       * 3D preview environment.
-       */
-      envHelper = scene.createDefaultEnvironment({
-        createGround: false,
-        // groundColor: Color3.Gray(),
-        // groundSize: 40,
-        skyboxSize: 100,
-        environmentTexture: hdrTexture
-      })
-      if (envHelper?.skybox) {
-        const skyBoxMaterial = new PBRMaterial('skybox-mat', scene)
-        skyBoxMaterial.reflectionTexture = hdrTexture.clone()
-        skyBoxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE
-        skyBoxMaterial.backFaceCulling = false
-
-        skyBoxMaterial.microSurface = 0.7
-        skyBoxMaterial.disableLighting = true
-        envHelper.skybox.material = skyBoxMaterial
-        envHelper.skybox.infiniteDistance = true
-        envHelper.skybox.isPickable = false
+          if (task.name === 'blue_globe') {
+            blueGlobeBB = BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(
+              task.loadedMeshes[0] as Mesh
+            )
+            blueGlobeBB.rotation = new Vector3(0, Tools.ToRadians(270), 0)
+            blueGlobeBB.parent = rootNode
+            hl.addExcludedMesh(blueGlobeBB)
+            blueGlobeBB.setEnabled(false)
+          }
+        }
       }
+
+      assetMgr.onProgress = (remaining, total) => {
+        setProgress(100 - (remaining / total) * 100)
+      }
+
+      assetMgr.onFinish = () => {
+        setStarted(true)
+      }
+
+      assetMgr.load()
+
+      // SceneLoader.ImportMesh(
+      //   '',
+      //   globe1_model_src,
+      //   '',
+      //   scene,
+      //   meshes => {
+      //     globeModel1 = BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(
+      //       meshes[0] as Mesh
+      //     )
+      //     globeModel1.rotation = new Vector3(0, Tools.ToRadians(270), 0)
+      //     globeModel1.parent = rootNode
+      //     // for (const mesh of meshes) {
+      //     //   mesh.isPickable = false
+      //     // }
+      //     hl.addExcludedMesh(globeModel1)
+      //     // orbitCam.useAutoRotationBehavior = true
+      //     // if (orbitCam.autoRotationBehavior) {
+      //     //   orbitCam.autoRotationBehavior.idleRotationSpeed = -0.05
+      //     // }
+
+      //     // orbitCam.setTarget(
+      //     //   new Vector3(model.position.x, model.scaling.y / 2, model.position.z)
+      //     // )
+
+      //     setStarted(true)
+      //   },
+      //   xhr => {
+      //     setProgress((xhr.loaded / xhr.total) * 100)
+      //   },
+      //   // undefined,
+      //   null,
+      //   '.glb'
+      // )
+
+      // /**
+      //  * Environment texture for 3d preview/skybox.
+      //  */
+      // const hdrTexture = CubeTexture.CreateFromPrefilteredData(
+      //   'https://assets.babylonjs.com/environments/environmentSpecular.env',
+      //   scene
+      // )
+      // hdrTexture.coordinatesMode = Texture.CUBIC_MODE
+      // hdrTexture.updateSamplingMode(Texture.LINEAR_LINEAR)
+
+      // /**
+      //  * 3D preview environment.
+      //  */
+      // envHelper = scene.createDefaultEnvironment({
+      //   createGround: false,
+      //   // groundColor: Color3.Gray(),
+      //   // groundSize: 40,
+      //   skyboxSize: 100,
+      //   environmentTexture: hdrTexture
+      // })
+      // if (envHelper?.skybox) {
+      //   const skyBoxMaterial = new PBRMaterial('skybox-mat', scene)
+      //   skyBoxMaterial.reflectionTexture = hdrTexture.clone()
+      //   skyBoxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE
+      //   skyBoxMaterial.backFaceCulling = false
+
+      //   skyBoxMaterial.microSurface = 0.7
+      //   skyBoxMaterial.disableLighting = true
+      //   envHelper.skybox.material = skyBoxMaterial
+      //   envHelper.skybox.infiniteDistance = true
+      //   envHelper.skybox.isPickable = false
+      // }
+
+      surface.isPickable = true
+
+      meshGestureBehavior(canvas, rootNode)
+
+      canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
 
       scene.registerBeforeRender(() => {
         if (
@@ -287,6 +330,20 @@ export const SoftsoapXrScene = () => {
         }
       })
 
+      // scene.onXrImageUpdatedObservable.add(e => {
+      //   console.log(`${e.name} updated`)
+      //   syncNodeWithImageTargetInfo(rootNode, e, scaleAdjust)
+      //   if (!bgm.isPlaying) {
+      //     bgm.play()
+      //   }
+      //   if (!animGroup.isPlaying) {
+      //     animGroup.play(true)
+      //   }
+      // })
+      // scene.onXrImageLostObservable.add(e => {
+      //   console.log(`${e.name} lost`)
+      // })
+
       engine.runRenderLoop(() => {
         window.TWEEN.update(performance.now())
         scene.render()
@@ -298,53 +355,53 @@ export const SoftsoapXrScene = () => {
     }
   }
 
-  const toggleArMode = () => {
-    const canvas = canvasRef.current
-    if (canvas === null) return
-    if (!isArMode) {
-      scene.setActiveCameraById(arCam.id)
-      orbitCam.useAutoRotationBehavior = false
-      orbitCam.detachControl()
-      orbitCam.setEnabled(false)
-      arCam.setEnabled(true)
-      if (window.XR8.isPaused()) {
-        window.XR8.resume()
-      } else {
-        onxrloaded()
-      }
-      removeMeshBehaviorRef.current = meshGestureBehavior(canvas, rootNode)
-      rootNode.scaling.copyFrom(startScale)
-      rootNode.position = Vector3.Zero()
-      rootNode.setEnabled(false)
-      envHelper?.skybox?.setEnabled(false)
-      placeCursor.setEnabled(true)
-      surface.isPickable = true
-      canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
-    } else {
-      window.XR8.pause()
-      scene.setActiveCameraById(orbitCam.id)
-      orbitCam.useAutoRotationBehavior = true
-      if (orbitCam.autoRotationBehavior) {
-        orbitCam.autoRotationBehavior.idleRotationSpeed = -0.05
-      }
-      orbitCam.alpha = camAlpha
-      orbitCam.beta = camBeta
-      orbitCam.radius = camRadius
-      orbitCam.setEnabled(true)
-      orbitCam.attachControl()
-      arCam.setEnabled(false)
-      canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
-      if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
-      rootNode.scaling = Vector3.One()
-      rootNode.position = Vector3.Zero()
-      rootNode.rotation = Vector3.Zero()
-      rootNode.setEnabled(true)
-      envHelper?.skybox?.setEnabled(true)
-      placeCursor.setEnabled(false)
-      surface.isPickable = false
-    }
-    setIsArMode(!isArMode)
-  }
+  // const toggleArMode = () => {
+  //   const canvas = canvasRef.current
+  //   if (canvas === null) return
+  //   if (!isArMode) {
+  //     scene.setActiveCameraById(arCam.id)
+  //     orbitCam.useAutoRotationBehavior = false
+  //     orbitCam.detachControl()
+  //     orbitCam.setEnabled(false)
+  //     arCam.setEnabled(true)
+  //     if (window.XR8.isPaused()) {
+  //       window.XR8.resume()
+  //     } else {
+  //       onxrloaded()
+  //     }
+  //     removeMeshBehaviorRef.current = meshGestureBehavior(canvas, rootNode)
+  //     rootNode.scaling.copyFrom(startScale)
+  //     rootNode.position = Vector3.Zero()
+  //     rootNode.setEnabled(false)
+  //     envHelper?.skybox?.setEnabled(false)
+  //     placeCursor.setEnabled(true)
+  //     surface.isPickable = true
+  //     canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
+  //   } else {
+  //     window.XR8.pause()
+  //     scene.setActiveCameraById(orbitCam.id)
+  //     orbitCam.useAutoRotationBehavior = true
+  //     if (orbitCam.autoRotationBehavior) {
+  //       orbitCam.autoRotationBehavior.idleRotationSpeed = -0.05
+  //     }
+  //     orbitCam.alpha = camAlpha
+  //     orbitCam.beta = camBeta
+  //     orbitCam.radius = camRadius
+  //     orbitCam.setEnabled(true)
+  //     orbitCam.attachControl()
+  //     arCam.setEnabled(false)
+  //     canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
+  //     if (removeMeshBehaviorRef.current) removeMeshBehaviorRef.current()
+  //     rootNode.scaling = Vector3.One()
+  //     rootNode.position = Vector3.Zero()
+  //     rootNode.rotation = Vector3.Zero()
+  //     rootNode.setEnabled(true)
+  //     envHelper?.skybox?.setEnabled(true)
+  //     placeCursor.setEnabled(false)
+  //     surface.isPickable = false
+  //   }
+  //   setIsArMode(!isArMode)
+  // }
 
   const onxrloaded = () => {
     window.XR8.XrController.configure(xrControllerConfig)
@@ -368,12 +425,25 @@ export const SoftsoapXrScene = () => {
         }) => {
           if (status === 'hasVideo') {
             // initXrScene() // Add objects to the scene and set starting camera position.
+            scene.onXrImageFoundObservable.add(e => {
+              console.log(`${e.name} found`)
+              // setTargetFound(true)
+              setShowInstructions(true)
+              // syncNodeWithImageTargetInfo(rootNode, e, scaleAdjust)
+              rootNode.setEnabled(false)
+              // ! fix naming cuz it should be reversed in my head.
+              redGlobeBB.setEnabled(e.name === 'Blue_Globe')
+              blueGlobeBB.setEnabled(e.name === 'Red_Globe')
+              placeCursor.setEnabled(true)
+              surface.isPickable = true
+            })
           } else if (status === 'failed') {
             alert('Camera permission required to view AR.')
           }
         }
       }
     ])
+    startScene()
     arCam.addBehavior(
       window.XR8.Babylonjs.xrCameraBehavior({
         allowedDevices: window.XR8.XrConfig.device().MOBILE,
@@ -383,8 +453,19 @@ export const SoftsoapXrScene = () => {
     )
   }
 
+  // useEffect(() => {
+  //   startScene()
+  // }, [])
+
   useEffect(() => {
-    startScene()
+    const load = () => {
+      window.XRExtras.Loading.showLoading({ onxrloaded })
+    }
+    if (window.XRExtras) {
+      load()
+    } else {
+      window.addEventListener('xrextrasloaded', load)
+    }
   }, [])
 
   useEffect(() => {
@@ -447,14 +528,14 @@ export const SoftsoapXrScene = () => {
           i
         </button>
       )}
-      {started && (
+      {/* {started && (
         <button
           class='btn btn-softsoap absolute bottom-10 left-1/2 -translate-x-1/2'
           onClick={toggleArMode}
         >
           {isArMode ? 'View in 3D' : 'View in AR'}
         </button>
-      )}
+      )} */}
       {/* <div class='absolute bottom-2 left-2 pointer-events-none'>
         <PoweredByPostReality />
       </div> */}
