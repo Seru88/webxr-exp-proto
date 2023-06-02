@@ -411,7 +411,6 @@ export const SoftsoapXrScene = () => {
       orbitCam.beta = camBeta
       orbitCam.radius = camRadius
       orbitCam.setEnabled(true)
-      // orbitCam.setTarget(rootNode.position)
       orbitCam.attachControl()
       arCam.setEnabled(false)
       canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
@@ -423,6 +422,13 @@ export const SoftsoapXrScene = () => {
       envHelper?.skybox?.setEnabled(true)
       placeCursor.setEnabled(false)
       surface.isPickable = false
+      orbitCam.setTarget(
+        new Vector3(
+          redGlobeBB.position.x,
+          redGlobeBB.scaling.y / 2,
+          redGlobeBB.position.z
+        )
+      )
     }
     setIsArMode(!isArMode)
   }
