@@ -33,6 +33,7 @@ import SplashOverlay from 'components/SplashOverlay'
 import meshGestureBehavior from 'helpers/meshGestureBehavior'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { isMobile } from 'react-device-detect'
+import { MdPhotoCamera } from 'react-icons/md'
 
 // import pinch_icon_src from 'assets/ui/pinch_icon.png'
 // import surface_icon_src from 'assets/ui/surface_icon.png'
@@ -73,6 +74,7 @@ export const SoftsoapXrScene = () => {
   const [showInstructions, setShowInstructions] = useState(false)
   const [isArMode, setIsArMode] = useState(true)
   const [targetFound, setTargetFound] = useState(false)
+  const [enableScreenshot, setEnableScreenshot] = useState(false)
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const removeMeshBehaviorRef = useRef<() => void>()
@@ -198,6 +200,9 @@ export const SoftsoapXrScene = () => {
 
       rootNode = new TransformNode('root-node', scene)
       rootNode.setEnabled(false)
+      rootNode.onEnabledStateChangedObservable.add(enabled => {
+        setEnableScreenshot(enabled)
+      })
 
       const assetMgr = new AssetsManager(scene)
       assetMgr.useDefaultLoadingScreen = false
@@ -318,7 +323,7 @@ export const SoftsoapXrScene = () => {
 
       // surface.isPickable = true
 
-      meshGestureBehavior(canvas, rootNode)
+      // meshGestureBehavior(canvas, rootNode)
 
       // canvas.addEventListener('touchstart', placeObjectTouchHandler, true)
 
@@ -406,6 +411,7 @@ export const SoftsoapXrScene = () => {
       orbitCam.beta = camBeta
       orbitCam.radius = camRadius
       orbitCam.setEnabled(true)
+      // orbitCam.setTarget(rootNode.position)
       orbitCam.attachControl()
       arCam.setEnabled(false)
       canvas.removeEventListener('touchstart', placeObjectTouchHandler, true)
@@ -430,7 +436,8 @@ export const SoftsoapXrScene = () => {
       window.XRExtras.Loading.pipelineModule(), // Manages the loading screen on startup.
       window.LandingPage.pipelineModule(), // Detects unsupported browsers and gives hints.
       // window.XRExtras.FullWindowCanvas.pipelineModule(),
-      window.XRExtras.RuntimeError.pipelineModule(), // Shows an error image on runtime error.
+      window.XRExtras.RuntimeError.pipelineModule(), // Shows an error image on runtime error.,
+      window.XR8.CanvasScreenshot.pipelineModule(),
       {
         name: 'camerastartupmodule',
         onCameraStatusChange: ({
@@ -472,6 +479,30 @@ export const SoftsoapXrScene = () => {
       }),
       true
     )
+  }
+
+  const handleScreenshot = async () => {
+    if (window.XR8) {
+      try {
+        const data = await window.XR8.CanvasScreenshot.takeScreenshot()
+        // const file = new File([...buffer], 'screenshot.jpeg', {
+        //   type: 'image/jpeg'
+        // })
+
+        // anchor link
+        const element = document.createElement('a')
+        // const href = URL.createObjectURL(file)
+        // setDownloadLink(href)
+        element.href = 'data:image/png;base64,' + data
+        element.download = `Softsoap AR Screenshot ${Date.now()}.jpeg`
+        // simulate link click
+        document.body.appendChild(element)
+        // Required for this to work in FireFox
+        element.click()
+      } catch (error) {
+        console.error(error)
+      }
+    }
   }
 
   // useEffect(() => {
@@ -551,10 +582,18 @@ export const SoftsoapXrScene = () => {
       )}
       {started && targetFound && (
         <button
-          class='btn btn-softsoap absolute bottom-10 left-1/2 -translate-x-1/2'
+          class='btn btn-softsoap absolute top-3 left-1/2 -translate-x-1/2'
           onClick={toggleArMode}
         >
           {isArMode ? 'View in 3D' : 'View in AR'}
+        </button>
+      )}
+      {enableScreenshot && (
+        <button
+          class='btn btn-softsoap absolute bottom-10 left-1/2 -translate-x-1/2 p-0 rounded-full'
+          onClick={handleScreenshot}
+        >
+          <MdPhotoCamera size='2em' />
         </button>
       )}
       {/* <div class='absolute bottom-2 left-2 pointer-events-none'>

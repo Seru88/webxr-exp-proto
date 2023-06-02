@@ -17,7 +17,8 @@
     "preact": "^10.13.2",
     "preact-async-route": "^2.2.1",
     "preact-router": "^4.1.0",
-    "react-device-detect": "^2.2.3"
+    "react-device-detect": "^2.2.3",
+    "react-icons": "^4.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
