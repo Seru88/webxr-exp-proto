@@ -1,6 +1,8 @@
 import '@babylonjs/loaders/glTF'
 
 import {
+  ActionManager,
+  AnimationGroup,
   ArcRotateCamera,
   AssetsManager,
   BoundingBoxGizmo,
@@ -9,6 +11,7 @@ import {
   DirectionalLight,
   Engine,
   EnvironmentHelper,
+  ExecuteCodeAction,
   FreeCamera,
   HemisphericLight,
   HighlightLayer,
@@ -25,6 +28,7 @@ import {
 } from '@babylonjs/core'
 import red_globe_model_src from 'assets/models/softsoap/Globe1.glb'
 import blue_globe_model_src from 'assets/models/softsoap/Globe2.glb'
+import gift_box_model_src from 'assets/models/softsoap/GiftBox.glb'
 import cursor_src from 'assets/textures/softsoap_cursor.png'
 import instructions_src from 'assets/ui/softsoap/softsoap_instructions.png'
 import Dialog from 'components/Dialog'
@@ -48,6 +52,8 @@ let placeCursor: Mesh
 let rootNode: TransformNode
 let redGlobeBB: Mesh
 let blueGlobeBB: Mesh
+let giftBoxBB: Mesh
+let giftBoxAnimationGroups: AnimationGroup[] = []
 // let animGroup: AnimationGroup
 const startScale = Vector3.Zero() // Initial scale value for our model
 const endScale = new Vector3(0.8, 0.8, 0.8) // Ending scale value for our model
@@ -75,12 +81,14 @@ export const SoftsoapXrScene = () => {
   const [isArMode, setIsArMode] = useState(true)
   const [targetFound, setTargetFound] = useState(false)
   const [enableScreenshot, setEnableScreenshot] = useState(false)
-  const [shaken, setShaken] = useState<any>()
+  const [shaken, setShaken] = useState(false)
+  // const []
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const removeMeshBehaviorRef = useRef<() => void>()
   const enableMotion = useRef(false)
   const motionDetectedTimeout = useRef<NodeJS.Timeout>()
+  const isGiftOpened = useRef(false)
 
   const placeObjectTouchHandler = (e: TouchEvent) => {
     // Reset AR Camera on two finger tap.
@@ -211,11 +219,11 @@ export const SoftsoapXrScene = () => {
       assetMgr.useDefaultLoadingScreen = false
       assetMgr.addMeshTask('red_globe', '', red_globe_model_src, '')
       assetMgr.addMeshTask('blue_globe', '', blue_globe_model_src, '')
+      assetMgr.addMeshTask('gift_box', '', gift_box_model_src, '')
 
       assetMgr.onTaskSuccess = task => {
         if (task instanceof MeshAssetTask) {
           const rootMesh = task.loadedMeshes[0] as Mesh
-          // let finishedMesh
           if (task.name === 'red_globe') {
             redGlobeBB =
               BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(rootMesh)
@@ -223,7 +231,6 @@ export const SoftsoapXrScene = () => {
             redGlobeBB.parent = rootNode
             hl.addExcludedMesh(redGlobeBB)
             redGlobeBB.setEnabled(false)
-            // finishedMesh = redGlobeBB
           }
           if (task.name === 'blue_globe') {
             blueGlobeBB =
@@ -232,17 +239,32 @@ export const SoftsoapXrScene = () => {
             blueGlobeBB.parent = rootNode
             hl.addExcludedMesh(blueGlobeBB)
             blueGlobeBB.setEnabled(false)
-            // finishedMesh = blueGlobeBB
           }
-          // if (finishedMesh) {
-          //   orbitCam.setTarget(
-          //     new Vector3(
-          //       finishedMesh.position.x,
-          //       finishedMesh.scaling.y / 2,
-          //       finishedMesh.position.z
-          //     )
-          //   )
-          // }
+          if (task.name === 'gift_box') {
+            giftBoxAnimationGroups = task.loadedAnimationGroups
+            giftBoxAnimationGroups.forEach(aG => {
+              aG.stop()
+            })
+            giftBoxBB =
+              BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(rootMesh)
+            giftBoxBB.rotation = new Vector3(0, Tools.ToRadians(270), 0)
+            giftBoxBB.parent = rootNode
+            const actionManager = new ActionManager(scene)
+            actionManager.registerAction(
+              new ExecuteCodeAction(
+                { trigger: ActionManager.OnPickTrigger },
+                () => {
+                  if (isGiftOpened.current) return
+                  isGiftOpened.current = true
+                  giftBoxAnimationGroups.forEach(aG => {
+                    aG.play()
+                  })
+                }
+              )
+            )
+            hl.addExcludedMesh(giftBoxBB)
+            giftBoxBB.setEnabled(false)
+          }
         }
       }
 
