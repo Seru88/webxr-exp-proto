@@ -75,9 +75,12 @@ export const SoftsoapXrScene = () => {
   const [isArMode, setIsArMode] = useState(true)
   const [targetFound, setTargetFound] = useState(false)
   const [enableScreenshot, setEnableScreenshot] = useState(false)
+  const [shaken, setShaken] = useState<any>()
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const removeMeshBehaviorRef = useRef<() => void>()
+  const enableMotion = useRef(false)
+  const motionDetectedTimeout = useRef<NodeJS.Timeout>()
 
   const placeObjectTouchHandler = (e: TouchEvent) => {
     // Reset AR Camera on two finger tap.
@@ -436,6 +439,12 @@ export const SoftsoapXrScene = () => {
   const onxrloaded = () => {
     window.XR8.XrController.configure(xrControllerConfig)
     window.XR8.addCameraPipelineModules([
+      {
+        name: 'request-accelerometer',
+        requiredPermissions: () => {
+          return [window.XR8.XrPermissions.permissions().DEVICE_MOTION]
+        }
+      },
       // Add camera pipeline modules.
       window.XR8.XrController.pipelineModule(), // Enables SLAM
       // window.XRExtras.AlmostThere.pipelineModule(), // Detects unsupported browsers and gives hints.
@@ -444,6 +453,7 @@ export const SoftsoapXrScene = () => {
       // window.XRExtras.FullWindowCanvas.pipelineModule(),
       window.XRExtras.RuntimeError.pipelineModule(), // Shows an error image on runtime error.,
       window.XR8.CanvasScreenshot.pipelineModule(),
+
       {
         name: 'camerastartupmodule',
         onCameraStatusChange: ({
@@ -469,8 +479,41 @@ export const SoftsoapXrScene = () => {
               blueGlobeBB.setEnabled(e.name === 'Red_Globe')
               // placeCursor.setEnabled(true)
               // surface.isPickable = true
+              enableMotion.current = true
               toggleArMode()
             })
+            if (window.XR8.XrPermissions) {
+              const permissions = window.XR8.XrPermissions.permissions()
+              const requiredPermissions = window.XR8.requiredPermissions()
+              if (!requiredPermissions.has(permissions.DEVICE_MOTION)) {
+                return
+              }
+              window.addEventListener(
+                'devicemotion',
+                event => {
+                  if (!enableMotion.current) return
+                  const { acceleration } = event
+                  const x = acceleration?.x ?? 0
+                  const y = acceleration?.y ?? 0
+                  const z = acceleration?.z ?? 0
+                  if (
+                    x <= -5 ||
+                    x >= 5 ||
+                    y <= -5 ||
+                    y >= 5 ||
+                    z <= -5 ||
+                    z >= 5
+                  ) {
+                    setShaken(true)
+                    clearTimeout(motionDetectedTimeout.current)
+                    motionDetectedTimeout.current = setTimeout(() => {
+                      setShaken(false)
+                    }, 1000)
+                  }
+                },
+                true
+              )
+            }
           } else if (status === 'failed') {
             alert('Camera permission required to view AR.')
           }
@@ -594,6 +637,11 @@ export const SoftsoapXrScene = () => {
           {isArMode ? 'View in 3D' : 'View in AR'}
         </button>
       )}
+      {shaken ? (
+        <div class='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-green-500 text-3xl text-center'>
+          Shake Detected
+        </div>
+      ) : null}
       {enableScreenshot && (
         <button
           class='btn btn-softsoap absolute bottom-10 left-1/2 -translate-x-1/2 p-0 rounded-full'
