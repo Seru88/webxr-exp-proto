@@ -15,6 +15,7 @@ import {
   FreeCamera,
   HemisphericLight,
   HighlightLayer,
+  ImageAssetTask,
   Mesh,
   MeshAssetTask,
   MeshBuilder,
@@ -22,6 +23,7 @@ import {
   Scene,
   StandardMaterial,
   Texture,
+  TextureAssetTask,
   Tools,
   TransformNode,
   Vector3
@@ -184,26 +186,26 @@ export const SoftsoapXrScene = () => {
       surface.receiveShadows = true
       // surface.setEnabled(false)
 
-      const cursorTexture = new Texture(cursor_src, scene)
-      cursorTexture.hasAlpha = true
-      const cursorMat = new StandardMaterial('cursor-mat', scene)
+      // const cursorTexture = new Texture(cursor_src, scene)
+      // cursorTexture.hasAlpha = true
+      // const cursorMat = new StandardMaterial('cursor-mat', scene)
 
-      cursorMat.diffuseTexture = cursorTexture
-      cursorMat.emissiveColor = Color3.White()
-      cursorMat.disableLighting = true
-      placeCursor = MeshBuilder.CreateGround(
-        'cursor-mesh',
-        { width: 1, height: 1 },
-        scene
-      )
-      placeCursor.isPickable = false
-      placeCursor.scaling.z = -1
-      placeCursor.scaling.x = -1
-      placeCursor.material = cursorMat
-      placeCursor.setEnabled(false)
+      // cursorMat.diffuseTexture = cursorTexture
+      // cursorMat.emissiveColor = Color3.White()
+      // cursorMat.disableLighting = true
+      // placeCursor = MeshBuilder.CreateGround(
+      //   'cursor-mesh',
+      //   { width: 1, height: 1 },
+      //   scene
+      // )
+      // placeCursor.isPickable = false
+      // placeCursor.scaling.z = -1
+      // placeCursor.scaling.x = -1
+      // placeCursor.material = cursorMat
+      // placeCursor.setEnabled(false)
 
       const hl = new HighlightLayer('hl', scene, { camera: arCam })
-      hl.addMesh(placeCursor, Color3.Black(), true)
+      // hl.addMesh(placeCursor, Color3.Black(), true)
       hl.addExcludedMesh(surface)
       hl.innerGlow = false
       hl.blurHorizontalSize = 3
@@ -215,13 +217,14 @@ export const SoftsoapXrScene = () => {
         setEnableScreenshot(enabled)
       })
 
-      const assetMgr = new AssetsManager(scene)
-      assetMgr.useDefaultLoadingScreen = false
-      assetMgr.addMeshTask('red_globe', '', red_globe_model_src, '')
-      assetMgr.addMeshTask('blue_globe', '', blue_globe_model_src, '')
-      assetMgr.addMeshTask('gift_box', '', gift_box_model_src, '')
+      const assetManager = new AssetsManager(scene)
+      assetManager.useDefaultLoadingScreen = false
+      assetManager.addMeshTask('red_globe', '', red_globe_model_src, '')
+      assetManager.addMeshTask('blue_globe', '', blue_globe_model_src, '')
+      assetManager.addMeshTask('gift_box', '', gift_box_model_src, '')
+      assetManager.addTextureTask('cursor-tex', cursor_src)
 
-      assetMgr.onTaskSuccess = task => {
+      assetManager.onTaskSuccess = task => {
         if (task instanceof MeshAssetTask) {
           const rootMesh = task.loadedMeshes[0] as Mesh
           if (task.name === 'red_globe') {
@@ -245,6 +248,7 @@ export const SoftsoapXrScene = () => {
             giftBoxAnimationGroups.forEach(aG => {
               aG.stop()
             })
+            rootMesh.scaling.setAll(1.25)
             giftBoxBB =
               BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(rootMesh)
             giftBoxBB.rotation = new Vector3(0, Tools.ToRadians(270), 0)
@@ -262,21 +266,42 @@ export const SoftsoapXrScene = () => {
                 }
               )
             )
+            giftBoxBB.actionManager = actionManager
             hl.addExcludedMesh(giftBoxBB)
             giftBoxBB.setEnabled(false)
           }
         }
+        if (task instanceof TextureAssetTask) {
+          const cursorTexture = task.texture
+          cursorTexture.hasAlpha = true
+          const cursorMat = new StandardMaterial('cursor-mat', scene)
+
+          cursorMat.diffuseTexture = cursorTexture
+          cursorMat.emissiveColor = Color3.White()
+          cursorMat.disableLighting = true
+          placeCursor = MeshBuilder.CreateGround(
+            'cursor-mesh',
+            { width: 1, height: 1 },
+            scene
+          )
+          placeCursor.isPickable = false
+          placeCursor.scaling.z = -1
+          placeCursor.scaling.x = -1
+          placeCursor.material = cursorMat
+          placeCursor.setEnabled(false)
+          hl.addMesh(placeCursor, Color3.Black(), true)
+        }
       }
 
-      assetMgr.onProgress = (remaining, total) => {
+      assetManager.onProgress = (remaining, total) => {
         setProgress(100 - (remaining / total) * 100)
       }
 
-      assetMgr.onFinish = () => {
+      assetManager.onFinish = () => {
         setStarted(true)
       }
 
-      assetMgr.load()
+      assetManager.load()
 
       // SceneLoader.ImportMesh(
       //   '',
@@ -356,6 +381,7 @@ export const SoftsoapXrScene = () => {
         if (
           rootNode &&
           rootNode.isEnabled() === false &&
+          placeCursor &&
           placeCursor.isEnabled()
         ) {
           const ray = arCam.getForwardRay(999)
@@ -499,6 +525,11 @@ export const SoftsoapXrScene = () => {
               // ! fix naming cuz it should be reversed in my head.
               redGlobeBB.setEnabled(e.name === 'Blue_Globe')
               blueGlobeBB.setEnabled(e.name === 'Red_Globe')
+              giftBoxBB.setEnabled(true)
+              giftBoxAnimationGroups.forEach(aG => {
+                aG.reset()
+                aG.stop()
+              })
               // placeCursor.setEnabled(true)
               // surface.isPickable = true
               enableMotion.current = true
@@ -519,12 +550,12 @@ export const SoftsoapXrScene = () => {
                   const y = acceleration?.y ?? 0
                   const z = acceleration?.z ?? 0
                   if (
-                    x <= -5 ||
-                    x >= 5 ||
-                    y <= -5 ||
-                    y >= 5 ||
-                    z <= -5 ||
-                    z >= 5
+                    x <= -10 ||
+                    x >= 10 ||
+                    y <= -10 ||
+                    y >= 10 ||
+                    z <= -10 ||
+                    z >= 10
                   ) {
                     setShaken(true)
                     clearTimeout(motionDetectedTimeout.current)

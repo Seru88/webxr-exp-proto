@@ -1,23 +1,24 @@
-import billboard_bg_src from 'assets/ui/billboard_bg.jpg'
-import booth_bg_src from 'assets/ui/booth_bg.jpg'
-import brochure_bg_src from 'assets/ui/brochure_bg.jpg'
-import candy_bg_src from 'assets/ui/candy_bg.jpg'
-import car_bg_src from 'assets/ui/car_bg.jpg'
-import college_bg_src from 'assets/ui/college_bg.jpg'
-import electro_booth_bg_src from 'assets/ui/electro_booth_bg.jpg'
-import electro_booth_thumb_src from 'assets/ui/electro_booth_thumb.jpg'
-import electro_globe_bg_src from 'assets/ui/electro_globe_bg.jpg'
-import electro_globe_thumb_src from 'assets/ui/electro_globe_thumb.jpg'
-import electro_logo_src from 'assets/ui/electro_logo.png'
-import golf_bg_src from 'assets/ui/golf_bg.jpg'
-import softsoap_bg_src from 'assets/ui/softsoap/softsoap_bg.jpg'
-import softsoap_splash_scroll_src from 'assets/ui/softsoap/splash_scroll.png'
 import clsx from 'clsx'
 import { FunctionalComponent } from 'preact'
 import { useEffect, useMemo, useRef } from 'preact/hooks'
-import { ThemeVariant } from 'types/themeVariant'
-
 import PoweredByPostReality from './PoweredByPostReality'
+
+import booth_bg_src from 'assets/ui/booth_bg.jpg'
+import candy_bg_src from 'assets/ui/candy_bg.jpg'
+import billboard_bg_src from 'assets/ui/billboard_bg.jpg'
+import brochure_bg_src from 'assets/ui/brochure_bg.jpg'
+import car_bg_src from 'assets/ui/car_bg.jpg'
+import college_bg_src from 'assets/ui/college_bg.jpg'
+import golf_bg_src from 'assets/ui/golf_bg.jpg'
+import electro_globe_bg_src from 'assets/ui/electro_globe_bg.jpg'
+import electro_booth_bg_src from 'assets/ui/electro_booth_bg.jpg'
+import electro_globe_thumb_src from 'assets/ui/electro_globe_thumb.jpg'
+import electro_booth_thumb_src from 'assets/ui/electro_booth_thumb.jpg'
+import electro_logo_src from 'assets/ui/electro_logo.png'
+import softsoap_bg_src from 'assets/ui/softsoap/softsoap_bg.jpg'
+import softsoap_splash_scroll_src from 'assets/ui/softsoap/splash_scroll.png'
+
+import { ThemeVariant } from 'types/themeVariant'
 
 type SplashOverlayProps = {
   open: boolean
@@ -89,7 +90,7 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           transition-opacity
           ease-in
           duration-300
-          p-4
+          p-8
         `,
           open ? 'opacity-100' : 'opacity-0'
         )}
@@ -99,7 +100,7 @@ const SplashOverlay: FunctionalComponent<SplashOverlayProps> = ({
           <img class='h-full w-auto' src={softsoap_logo_src} alt='' />
         </div> */}
         <div class='row-span-5 flex items-center justify-center'>
-          <img class='w-full h-auto' src={softsoap_splash_scroll_src} alt='' />
+          <img class='h-full w-auto' src={softsoap_splash_scroll_src} alt='' />
         </div>
         <div class='row-span-1 flex items-center justify-center'>
           {children}
